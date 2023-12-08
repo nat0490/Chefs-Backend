@@ -7,7 +7,7 @@ const userChefSchema = mongoose.Schema({
     passion: String,
     services: String,
     userDetails: {type: mongoose.Schema.Types.ObjectId, ref: 'userDetails'},
-    //recipe: {type: mongoose.Schema.Types.ObjectId, ref: 'userConnexion'},
+    recipes: {type: mongoose.Schema.Types.ObjectId, ref: 'recipes'},
 })
 
 const UserChef = mongoose.model('userChef', userChefSchema);

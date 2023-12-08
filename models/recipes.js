@@ -6,6 +6,7 @@ const prixSchema = mongoose.Schema({
     panierCourseParPersonne: Number,
 })
 
+//SOUS-DOC OU CLE ETRANGERE???
 const ustensilSchema = mongoose.Schema({
     name: String,
     quantity: Number,

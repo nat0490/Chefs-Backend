@@ -13,7 +13,7 @@ const userDetailsSchema = mongoose.Schema({
     tel: String,
     cuisto: Boolean,
     userConnexion: {type: mongoose.Schema.Types.ObjectId, ref: 'userConnexion'},
-    //orders: {type: mongoose.Schema.Types.ObjectId, ref: 'userConnexion'},
+    orders: {type: mongoose.Schema.Types.ObjectId, ref: 'orders'},
 
 })
 
