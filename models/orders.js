@@ -8,7 +8,7 @@ const ordersSchema = mongoose.Schema({
     //USERCHEF? DEJA DANS LA RECETTE, ON RAJOUTE QUAND MÊME?
     userCHEF: {type: mongoose.Schema.Types.ObjectId, ref: 'userChef'},
     montant: Number,
-    date: new date(),
+    date: Date,
 })
 
 const Order = mongoose.model('orders', ordersSchema);
