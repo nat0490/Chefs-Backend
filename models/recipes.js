@@ -26,6 +26,7 @@ const recipesSchema = mongoose.Schema({
     //Feedback: [{type: mongoose.Schema.Types.ObjectId, ref: 'userChef'}],
     type: String,
     notes: String,
+    //=> moyenne des votes
     prix: prixSchema,
     ustensils: [ustensilSchema],
     ingredients: [ingredientsSchema],

@@ -48,12 +48,12 @@ router.post('/signup', (req, res) => {
 router.post('/details/create', (req, res) => {
   //METS-ON LE CHECK BODY? 
   //L'UTILISATEUR PEUX-T-IL RAJOUTER LES INFOS QUAND IL LE VEUX? OU TOUS METTRE D'UN COUP?
-  if (!checkBody(req.body, ['cuisto', 'userConnexion', 'tel', 'nom', 'prenom'])) {
+  if (!checkBody(req.body, ['cuisto', 'userConnexion', 'tel', 'nom', 'prenom','email'])) {
     res.status(500).json({ result: false, error: 'Missing or empty fields' });
     return;
   }
- // UserDetails.findOne({ username: req.body.username }).then(data => {
-    //if (data === null) {
+  UserDetails.findOne({ email: req.body.email }).then(data => {
+    if (data === null) {
       const newUserDetails = new UserDetails({
         nom: req.body.nom,
         prenom: req.body.prenom,
@@ -69,12 +69,12 @@ router.post('/details/create', (req, res) => {
       newUserDetails.save().then(newDoc => {
         res.json({ result: true, newDoc });
       });
-    //} else {
-     // res.status(500).json({ result: false, error: 'User already exists' });
-    //}
+    } else {
+      res.status(500).json({ result: false, error: 'Email already have an acount' });
+    }
   }
   );
-  //});
+  });
 
 
 
