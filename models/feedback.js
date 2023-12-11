@@ -5,6 +5,7 @@ const feedbackSchema = mongoose.Schema({
     recipes: {type: mongoose.Schema.Types.ObjectId, ref: 'recipes'},
     rating: Number,
     commentaire: String,
+    date: Date,
 })
 
 const Feedback = mongoose.model('feedback', feedbackSchema);
