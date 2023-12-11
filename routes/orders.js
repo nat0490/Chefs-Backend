@@ -58,7 +58,7 @@ router.get('/all/:UserChefId', (req,res) => {
 });
 
 //VOIR TOUTES LES COMMANDES
-router.get('/all/:UserConnexionId', (req,res) => {
+router.get('/all', (req,res) => {
     Order.find()
         .then(data => {
             if (data) {

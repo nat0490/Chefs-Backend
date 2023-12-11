@@ -71,11 +71,11 @@ router.put('/:feedbackId/update-rating', (req,res) => {
 
 //FEEDBACK POUR UN PLAT (pour faire sa note moyenne)
 router.get("/findRecipe", (req,res) => {
-    if (!req.body.recipes) {
+    if (!req.body.recipesId) {
         res.status(500).json({ result: false, error: 'Missing or empty fields' });
         return;
     } else {
-        Feedback.find({recipes: req.body.recipes})
+        Feedback.find({recipes: req.body.recipesId})
         .then(data => {
             if (data) {
                 res.json({ result: true, recipes: data})

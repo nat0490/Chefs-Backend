@@ -6,6 +6,8 @@ const { checkBody } = require('../modules/checkBody');
 const uid2 = require('uid2');
 const bcrypt = require('bcrypt');
 
+//app.use('/users', usersRouter);
+
 
 //créer un user pour connexion => Test TC OK
 router.post('/signup', (req, res) => {
