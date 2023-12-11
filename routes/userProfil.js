@@ -38,18 +38,42 @@ router.post('/create/:userConnexionId', (req, res) => {
   );
 });
 
-//RECUPERER TOUTES LES INFOS D'UN USER
+//RECUPERER TOUTES LES INFOS D'UN USER => Test TC OK sauf pour userPreference & orders
 router.get('/:userProfilId', (req, res) => {
   UserProfil.findOne({ _id : req.params.userProfilId})
     .populate("adresse")
+    //.populate("userPreference")
+    //.populate("orders")
+    .populate("userConnexion")
+    .exec()
     .then((data) => {
       if (data) {
         res.json({result: true, data})
+      } else {
+        res.json({result: false, message: "profil utilisateur non trouvé"})
       }
     })
+    .catch((error) => {
+      console.error(error);
+      res.status(500).json({ result: false, message: 'Erreur serveur' });
+    });
 });
 
-//VOIR LE STATUE CHEF
+//VOIR LE STATUE CHEF => Test TC OK
+router.get('/chef/:userProfilId', (req, res) => {
+  UserProfil.findOne({ _id : req.params.userProfilId})
+    .then((data) => {
+      if (data) {
+        res.json({result: true, chef: data.chef})
+      } else {
+        res.json({result: false, message: "profil utilisateur non trouvé"})
+      }
+    })
+    .catch((error) => {
+      console.error(error);
+      res.status(500).json({ result: false, message: 'Erreur serveur' });
+    });
+});
 
 //METTRE A JOUR SON ADRESSE => Test TC OK
 router.put('/:userId/update-adresse', async (req, res) => {

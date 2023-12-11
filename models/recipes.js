@@ -6,12 +6,6 @@ const prixSchema = mongoose.Schema({
     panierCourseParPersonne: Number,
 })
 
-//CLE ETRANGERE A FAIRE
-const ustensilSchema = mongoose.Schema({
-    name: String,
-    quantity: Number,
-})
-
 const ingredientsSchema = mongoose.Schema({
     name: String,
     quantity: Number,
