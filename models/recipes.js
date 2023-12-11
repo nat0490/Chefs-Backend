@@ -20,9 +20,9 @@ const ingredientsSchema = mongoose.Schema({
 
 const recipesSchema = mongoose.Schema({
     userChef: {type: mongoose.Schema.Types.ObjectId, ref: 'userChef'},
-    name: String,
+    title: String,
     image: String,
-    time: Date,
+    time: String,
     Feedback: [{type: mongoose.Schema.Types.ObjectId, ref: 'feedback'}],
     type: String,
     notes: String,
