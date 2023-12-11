@@ -48,7 +48,7 @@ router.post('/signup', (req, res) => {
 router.post('/details/create', (req, res) => {
   //METS-ON LE CHECK BODY? 
   //L'UTILISATEUR PEUX-T-IL RAJOUTER LES INFOS QUAND IL LE VEUX? OU TOUS METTRE D'UN COUP?
-  if (!checkBody(req.body, ['cuisto', 'userConnexion', 'tel', 'nom', 'prenom','email'])) {
+  if (!checkBody(req.body, ['chef', 'userConnexion', 'tel', 'nom', 'prenom','email', 'rue', 'ville', 'codePostal'])) {
     res.status(500).json({ result: false, error: 'Missing or empty fields' });
     return;
   }
