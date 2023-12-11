@@ -2,7 +2,7 @@ var express = require('express');
 var router = express.Router();
 
 const UserConnexion = require('../models/userConnexion');
-const UserDetails = require('../models/userDetails');
+const UserProfil = require('../models/userProfil');
 const UserChef = require('../models/userChef');
 const { checkBody } = require('../modules/checkBody');
 const uid2 = require('uid2');
@@ -52,7 +52,7 @@ router.post('/details/create', (req, res) => {
     res.status(500).json({ result: false, error: 'Missing or empty fields' });
     return;
   }
-  UserDetails.findOne({ email: req.body.email }).then(data => {
+  UserProfil.findOne({ email: req.body.email }).then(data => {
     if (data === null) {
       const newUserDetails = new UserDetails({
         nom: req.body.nom,
