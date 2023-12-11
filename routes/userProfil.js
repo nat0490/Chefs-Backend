@@ -9,16 +9,17 @@ const bcrypt = require('bcrypt');
 
 
 //créer un userProfil => Test TC OK
-router.post('/create', (req, res) => {
+router.post('/create/:userConnexion', (req, res) => {
     //Toutes les infos sont demandé d'un coup
-    if (!checkBody(req.body, ['chef', 'userConnexion', 'tel', 'nom', 'prenom','email', 'rue', 'ville', 'codePostal'])) {
+    if (!checkBody(req.body, ['nom', 'prenom', 'tel', 'rue', 'ville', 'codePostal', 'chef'])) {
       res.status(500).json({ result: false, error: 'Missing or empty fields' });
       return;
     }
-    UserProfil.findOne({ email: req.body.email }).then(data => {
+    //le profil est-il déjà créé pour cet ID de connexion?
+    UserProfil.findOne({ userConnexion: req.params.userConnexion }).then(data => {
       if (data === null) {
-        const newUserDetails = new UserDetails({
-          userConnexion: req.body.userConnexion,
+        const newProfil = new UserProfil({
+          userConnexion: req.params.userConnexion,
           nom: req.body.nom,
           prenom: req.body.prenom,
           adresse: {
@@ -28,41 +29,85 @@ router.post('/create', (req, res) => {
           },
           tel: req.body.tel,
           chef: req.body.chef,
-          
         });
-        newUserDetails.save().then(newDoc => {
+        newProfil.save().then(newDoc => {
           res.json({ result: true, newDoc });
         });
       } else {
-        res.status(500).json({ result: false, error: 'Email already have an acount' });
+        res.status(500).json({ result: false, error: "Profil alrady create for this Userconnexion" });
       }
     }
-    );
-    });
-  
-  
-  
-  //créer un user pour chef
-  
-  
-  
-  //chercher un user par nom (connexion) => Test TC OK
-  router.post('/signin', (req, res) => {
-    if (!checkBody(req.body, ['username', 'password'])) {
-      res.status(500).json({ result: false, error: 'Missing or empty fields' });
-      return;
-    }
-    UserProfil.findOne({ username: req.body.username }).then(data => {
-      if (data && bcrypt.compareSync(req.body.password, data.password)) {
-        res.json({ result: true, data });
+  );
+});
+ 
+
+
+//METTRE A JOUR SON ADRESSE
+
+
+
+//METTRE A JOUR SON TEL => Test TC OK
+router.put('/:userId/update-tel', async (req, res) => {
+  const { userId } = req.params;
+  const { newTel } = req.body;
+  UserProfil.findOne( {_id: userId})
+    .then((data)=> {
+      if (data.tel === newTel) {
+        res.json({ result: false, message: 'Same Tel'})
       } else {
-        res.status(500).json({ result: false, error: 'User not found or wrong password' });
+        UserProfil.updateOne(
+          { _id: userId },
+          { $set: { tel: newTel }}
+          ).then((data => {
+            if (data.acknowledged === false) {
+              res.status(500).json({ result: false, error: "noMatch" });
+            } else {
+              res.json({ result: true, message: 'Tel change' });
+            }
+          }));
+      }
+  })
+});
+
+//METTRE A JOUR CHEF => Test TC OK
+router.put('/:userId/update-chef', async (req, res) => {
+  const { userId } = req.params;
+  UserProfil.findOne( {_id: userId})
+    .then((data)=> {
+      let newStatus = !data.chef;
+        UserProfil.updateOne(
+          { _id: userId },
+          { $set: { chef: newStatus }}
+          ).then((data => {
+            if (data.acknowledged === false) {
+              res.status(500).json({ result: false, error: "noMatch" });
+            } else {
+              res.json({ result: true, message: `Statue Chef change to: ${newStatus}` });
+            }
+          }));
+  })
+});
+
+  
+//SUPPRIMER UN PROFIL => Test TC OK
+router.delete("/delete", (req, res) => {
+  if (req.body.id === "") {
+    res.status(500).json({ result: false, error: "Missing fields" });
+  } else {
+    UserProfil.deleteOne({ _id: req.body.id }).then((dataDeleted) => {
+      console.log(dataDeleted);
+      if (dataDeleted.deletedCount === 0) {
+        res.status(500).json({ result: false, error: "Impossible to delete" });
+      } else {
+        res.json({ result: true });
       }
     });
-  });
+  }
+});
   
   
-  //mettre à jour un user: 
+  
+   
   
   module.exports = router;
   

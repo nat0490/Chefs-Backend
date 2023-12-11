@@ -34,8 +34,7 @@ router.post('/signup', (req, res) => {
   });
   });
 
-
-  //Connecter un user
+  //Connecter un user => Test TC OK
   router.post('/signin', (req, res) => {
     //connection via email et PW
     if (!checkBody(req.body, ['email', 'password'])) {
@@ -51,10 +50,8 @@ router.post('/signup', (req, res) => {
       }
     });
   });
-  
 
-
-  //modifier psw
+  //modifier psw => Test TC OK
 router.put('/:userId/update-password', async (req, res) => {
   const { userId } = req.params;
   const { newPassword } = req.body;
@@ -78,9 +75,8 @@ router.put('/:userId/update-password', async (req, res) => {
         }
       })
 });
-    
 
-  //modifier email
+  //modifier email => Test TC OK
   router.put('/:userId/update-email', async (req, res) => {
     const { userId } = req.params;
     const { newEmail } = req.body;
@@ -104,9 +100,7 @@ router.put('/:userId/update-password', async (req, res) => {
     })
   });
   
-
-
-  //modifier username
+  //modifier username => Test TC OK
   router.put('/:userId/update-username', async (req, res) => {
     const { userId } = req.params;
     const { newUserName } = req.body;
@@ -130,8 +124,7 @@ router.put('/:userId/update-password', async (req, res) => {
     })
   });
 
-
-  //supprimer un compte
+  //supprimer un compte => Test TC OK
   //coté FRONT: demander PW + email
   router.delete("/delete", (req, res) => {
     if (req.body.id === "") {
