@@ -1,8 +1,8 @@
 const mongoose = require('mongoose');
 
 const feedbackSchema = mongoose.Schema({
-    userDetails: {type: mongoose.Schema.Types.ObjectId, ref: 'userDetails'},
-    userChef: {type: mongoose.Schema.Types.ObjectId, ref: 'userChef'},
+    userProfil: {type: mongoose.Schema.Types.ObjectId, ref: 'userProfil'},
+    recipes: {type: mongoose.Schema.Types.ObjectId, ref: 'recipes'},
     rating: Number,
     commentaire: String,
 })

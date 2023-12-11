@@ -11,9 +11,10 @@ const userDetailsSchema = mongoose.Schema({
     prenom: String,
     adresse: adresseSchema,
     tel: String,
-    cuisto: Boolean,
+    chef: Boolean,
     userConnexion: {type: mongoose.Schema.Types.ObjectId, ref: 'userConnexion'},
     orders: {type: mongoose.Schema.Types.ObjectId, ref: 'orders'},
+    userPreference: {type: mongoose.Schema.Types.ObjectId, ref: 'userPreference'}
 
 })
 

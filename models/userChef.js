@@ -6,7 +6,7 @@ const userChefSchema = mongoose.Schema({
     experience: String,
     passion: String,
     services: String,
-    userDetails: {type: mongoose.Schema.Types.ObjectId, ref: 'userDetails'},
+    userProfil: {type: mongoose.Schema.Types.ObjectId, ref: 'userProfil'},
     recipes: {type: mongoose.Schema.Types.ObjectId, ref: 'recipes'},
 })
 

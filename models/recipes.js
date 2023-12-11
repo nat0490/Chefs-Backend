@@ -6,7 +6,7 @@ const prixSchema = mongoose.Schema({
     panierCourseParPersonne: Number,
 })
 
-//SOUS-DOC OU CLE ETRANGERE???
+//CLE ETRANGERE A FAIRE
 const ustensilSchema = mongoose.Schema({
     name: String,
     quantity: Number,
@@ -22,13 +22,14 @@ const recipesSchema = mongoose.Schema({
     userChef: {type: mongoose.Schema.Types.ObjectId, ref: 'userChef'},
     name: String,
     image: String,
-    time: String,
-    //Feedback: [{type: mongoose.Schema.Types.ObjectId, ref: 'userChef'}],
+    time: Date,
+    Feedback: [{type: mongoose.Schema.Types.ObjectId, ref: 'feedback'}],
     type: String,
     notes: String,
     //=> moyenne des votes
     prix: prixSchema,
-    ustensils: [ustensilSchema],
+    ustensils: [{type: mongoose.Schema.Types.ObjectId, ref: 'ustensils'}],
+    //ustensils: [ustensilSchema],
     ingredients: [ingredientsSchema],
 })
 
