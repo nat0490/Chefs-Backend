@@ -14,7 +14,7 @@ router.post('/signup', (req, res) => {
     return;
   }
   //Find if user already existe
-  UserConnexion.findOne({ username: req.body.username }).then(data => {
+  UserConnexion.findOne({ /*username: req.body.username ||*/ email: req.body.email }).then(data => {
     if (data === null) {
       //user don't exist = create user
       const hash = bcrypt.hashSync(req.body.password, 10);
@@ -62,6 +62,7 @@ router.put('/:userId/update-password', async (req, res) => {
         if (bcrypt.compareSync(newPassword, data.password)) {
           res.json({ result: false, message: 'Same Password'})
         } else {
+          //PW différent donc modif du PW
           UserConnexion.updateOne(
           { _id: userId },
           { $set: { password: hashUpdate }}
@@ -86,16 +87,25 @@ router.put('/:userId/update-password', async (req, res) => {
         if (data.email === newEmail) {
           res.json({ result: false, message: 'Same Email'})
         } else {
-          UserConnexion.updateOne(
-            { _id: userId },
-            { $set: { email: newEmail }}
-            ).then((data => {
-              if (data.acknowledged === false) {
-                res.status(500).json({ result: false, error: "noMatch" });
-              } else {
-                res.json({ result: true, message: 'Email change' });
-              }
-            }));
+          //vérifier si un profil à déjà ce nouvel email
+          UserConnexion.findOne({email: newEmail})
+          .then(data => {
+            if (data) {
+              res.json({ result: false, message: 'This new Email have an other acount'})
+            } else {
+              UserConnexion.updateOne(
+                //Email dif donc on change
+                { _id: userId },
+                { $set: { email: newEmail }}
+                ).then((data => {
+                  if (data.acknowledged === false) {
+                    res.status(500).json({ result: false, error: "noMatch" });
+                  } else {
+                    res.json({ result: true, message: 'Email change' });
+                  }
+                }));
+            }
+          })
         }
     })
   });
