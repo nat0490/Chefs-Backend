@@ -6,18 +6,17 @@ const adresseSchema = mongoose.Schema({
     codePostal: String,
 })
 
-const userDetailsSchema = mongoose.Schema({
+const userProfilSchema = mongoose.Schema({
     nom: String,
     prenom: String,
     adresse: adresseSchema,
     tel: String,
     chef: Boolean,
     userConnexion: {type: mongoose.Schema.Types.ObjectId, ref: 'userConnexion'},
-    orders: {type: mongoose.Schema.Types.ObjectId, ref: 'orders'},
-    userPreference: {type: mongoose.Schema.Types.ObjectId, ref: 'userPreference'}
-
+    orders: [{type: mongoose.Schema.Types.ObjectId, ref: 'orders'}],
+    userPreference: [{type: mongoose.Schema.Types.ObjectId, ref: 'userPreference'}]
 })
 
-const UserDetails = mongoose.model('userDetails', userDetailsSchema);
+const UserProfil = mongoose.model('userProfil', userProfilSchema);
 
-module.exports = UserDetails;
+module.exports = UserProfil;
