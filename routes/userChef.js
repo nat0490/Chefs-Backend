@@ -56,105 +56,125 @@ router.get('/:userChefId', (req, res) => {
 
 
 
-// Mettre à jour les spécialisation  d'un UserChef
-router.put('/:userChefId/update-spécialisation', (req, res) => {
-  const updatedFields = {};
-
-  if (req.body.spécialisation) {
-    updatedFields.spécialisation = req.body.spécialisation;
-  }
-  
-
-  UserChef.findOneAndUpdate({ _id: req.params.userChefId }, { $set: updatedFields }, { new: true })
-    .then(updatedUser => {
-      if (updatedUser) {
-        res.json({ result: true, updatedUser });
+//METTRE A JOUR  spécialisation 
+router.put('/:userChefId/updatespecialisation', async (req, res) => {
+  const { userChefId } = req.params;
+  const { newspécialisation } = req.body;
+  UserChef.findOne( {_id: userChefId})
+    .then((data)=> {
+      if (data.spécialisation === newspécialisation) { //spécialisation identique à l'ancien
+        res.json({ result: false, message: 'Same spécialisation'})
       } else {
-        res.status(404).json({ result: false, error: 'UserChef not found' });
+        UserChef.updateOne(
+          { _id: userChefId },
+          { $set: { spécialisation: newspécialisation }}
+          ).then((data => {
+            if (data.acknowledged === false) {
+              res.status(500).json({ result: false, error: "noMatch" });
+            } else {
+              res.json({ result: true, message: 'spécialisation change' });
+            }
+          }));
       }
-    });
+  })
 });
 
 
 // Mettre à jour les userCompliment  d'un UserChef
-router.put('/:userChefId/update-userCompliment', (req, res) => {
-  const updatedFields = {};
-
-  if (req.body.userCompliment) {
-    updatedFields.userCompliment = req.body.userCompliment;
-  }
-  
-
-  UserChef.findOneAndUpdate({ _id: req.params.userChefId }, { $set: updatedFields }, { new: true })
-    .then(updatedUser => {
-      if (updatedUser) {
-        res.json({ result: true, updatedUser });
+router.put('/:userChefId/update', async (req, res) => {
+  const { userChefId } = req.params;
+  const { newsuserCompliment } = req.body;
+  UserChef.findOne( {_id: userChefId})
+    .then((data)=> {
+      if (data.userCompliment === newsuserCompliment) { //userCompliment identique à l'ancien
+        res.json({ result: false, message: 'Same userCompliment'})
       } else {
-        res.status(404).json({ result: false, error: 'UserChef not found' });
+        UserChef.updateOne(
+          { _id: userChefId },
+          { $set: { spécialisation: newsuserCompliment }}
+          ).then((data => {
+            if (data.acknowledged === false) {
+              res.status(500).json({ result: false, error: "noMatch" });
+            } else {
+              res.json({ result: true, message: 'userCompliment change' });
+            }
+          }));
       }
-    });
+  })
 });
 
 
 
 
-// Mettre à jour les experience d'un UserChef
-router.put('/:userChefId/update-experience', (req, res) => {
-  const updatedFields = {};
-
-  if (req.body.experience) {
-    updatedFields.experience = req.body.experience;
-  }
-  
-
-  UserChef.findOneAndUpdate({ _id: req.params.userChefId }, { $set: updatedFields }, { new: true })
-    .then(updatedUser => {
-      if (updatedUser) {
-        res.json({ result: true, updatedUser });
+//METTRE A JOUR  l'experience 
+router.put('/:userChefId/updateexperience', async (req, res) => {
+  const { userChefId } = req.params;
+  const { newsexperience } = req.body;
+  UserChef.findOne( {_id: userChefId})
+    .then((data)=> {
+      if (data.experience === newsexperience) { //experience identique à l'ancien
+        res.json({ result: false, message: 'Same experience'})
       } else {
-        res.status(404).json({ result: false, error: 'UserChef not found' });
+        UserChef.updateOne(
+          { _id: userChefId },
+          { $set: { experience: newsexperience}}
+          ).then((data => {
+            if (data.acknowledged === false) {
+              res.status(500).json({ result: false, error: "noMatch" });
+            } else {
+              res.json({ result: true, message: 'experience change' });
+            }
+          }));
       }
-    });
+  })
 });
 
 
-// Mettre à jour les experience d'un UserChef
-router.put('/:userChefId/update-passion', (req, res) => {
-  const updatedFields = {};
-
-  if (req.body.passion) {
-    updatedFields.passion = req.body.passion;
-  }
-  
-
-  UserChef.findOneAndUpdate({ _id: req.params.userChefId }, { $set: updatedFields }, { new: true })
-    .then(updatedUser => {
-      if (updatedUser) {
-        res.json({ result: true, updatedUser });
+//METTRE A JOUR la passion 
+router.put('/:userChefId/updatepassion', async (req, res) => {
+  const { userChefId } = req.params;
+  const { newspassion } = req.body;
+  UserChef.findOne( {_id: userChefId})
+    .then((data)=> {
+      if (data.passion === newpassion) { //passion identique à l'ancien
+        res.json({ result: false, message: 'Same passion'})
       } else {
-        res.status(404).json({ result: false, error: 'UserChef not found' });
+        UserChef.updateOne(
+          { _id: userChefId },
+          { $set: { passion: newspassion }}
+          ).then((data => {
+            if (data.acknowledged === false) {
+              res.status(500).json({ result: false, error: "noMatch" });
+            } else {
+              res.json({ result: true, message: 'passion change' });
+            }
+          }));
       }
-    });
+  })
 });
 
 
-// Mettre à jour les services d'un UserChef
-router.put('/:userChefId/update-services', (req, res) => {
-  const updatedFields = {};
-
-  if (req.body.services) {
-    updatedFields.services = req.body.services;
-  }
-  
-
-  UserChef.findOneAndUpdate({ _id: req.params.userChefId }, { $set: updatedFields }, { new: true })
-    .then(updatedUser => {
-      if (updatedUser) {
-        res.json({ result: true, updatedUser });
+//METTRE A JOUR  le services 
+router.put('/:userChefId/updateservices', async (req, res) => {
+  const { userChefId } = req.params;
+  const { newservices } = req.body;
+  UserChef.findOne( {_id: userChefId})
+    .then((data)=> {
+      if (data.services === newservices) { //services identique à l'ancien
+        res.json({ result: false, message: 'Same services'})
       } else {
-        res.status(404).json({ result: false, error: 'UserChef not found' });
+        UserChef.updateOne(
+          { _id: userChefId },
+          { $set: { services: newservices }}
+          ).then((data => {
+            if (data.acknowledged === false) {
+              res.status(500).json({ result: false, error: "noMatch" });
+            } else {
+              res.json({ result: true, message: 'services change' });
+            }
+          }));
       }
-    });
+  })
 });
 
 // Supprimer un UserChef
