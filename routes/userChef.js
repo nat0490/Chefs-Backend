@@ -31,4 +31,142 @@ router.post('/upgradeToChef/:userId', (req, res) => {
     });
 });
 
+
+// Récupérer les informations d'un UserChef
+router.get('/:userChefId', (req, res) => {
+  UserChef.findOne({ _id: req.params.userChefId })
+    .populate("userProfil")
+    .exec()
+    .then(data => {
+      if (data) {
+        res.json({ result: true, data });
+      } else {
+        res.json({ result: false, message: "UserChef profile not found" });
+      }
+    })
+    .catch(error => {
+      console.error(error);
+      res.status(500).json({ result: false, message: 'Server error' });
+    });
+});
+
+
+
+
+
+
+
+// Mettre à jour les spécialisation  d'un UserChef
+router.put('/:userChefId/update-spécialisation', (req, res) => {
+  const updatedFields = {};
+
+  if (req.body.spécialisation) {
+    updatedFields.spécialisation = req.body.spécialisation;
+  }
+  
+
+  UserChef.findOneAndUpdate({ _id: req.params.userChefId }, { $set: updatedFields }, { new: true })
+    .then(updatedUser => {
+      if (updatedUser) {
+        res.json({ result: true, updatedUser });
+      } else {
+        res.status(404).json({ result: false, error: 'UserChef not found' });
+      }
+    });
+});
+
+
+// Mettre à jour les userCompliment  d'un UserChef
+router.put('/:userChefId/update-userCompliment', (req, res) => {
+  const updatedFields = {};
+
+  if (req.body.userCompliment) {
+    updatedFields.userCompliment = req.body.userCompliment;
+  }
+  
+
+  UserChef.findOneAndUpdate({ _id: req.params.userChefId }, { $set: updatedFields }, { new: true })
+    .then(updatedUser => {
+      if (updatedUser) {
+        res.json({ result: true, updatedUser });
+      } else {
+        res.status(404).json({ result: false, error: 'UserChef not found' });
+      }
+    });
+});
+
+
+
+
+// Mettre à jour les experience d'un UserChef
+router.put('/:userChefId/update-experience', (req, res) => {
+  const updatedFields = {};
+
+  if (req.body.experience) {
+    updatedFields.experience = req.body.experience;
+  }
+  
+
+  UserChef.findOneAndUpdate({ _id: req.params.userChefId }, { $set: updatedFields }, { new: true })
+    .then(updatedUser => {
+      if (updatedUser) {
+        res.json({ result: true, updatedUser });
+      } else {
+        res.status(404).json({ result: false, error: 'UserChef not found' });
+      }
+    });
+});
+
+
+// Mettre à jour les experience d'un UserChef
+router.put('/:userChefId/update-passion', (req, res) => {
+  const updatedFields = {};
+
+  if (req.body.passion) {
+    updatedFields.passion = req.body.passion;
+  }
+  
+
+  UserChef.findOneAndUpdate({ _id: req.params.userChefId }, { $set: updatedFields }, { new: true })
+    .then(updatedUser => {
+      if (updatedUser) {
+        res.json({ result: true, updatedUser });
+      } else {
+        res.status(404).json({ result: false, error: 'UserChef not found' });
+      }
+    });
+});
+
+
+// Mettre à jour les services d'un UserChef
+router.put('/:userChefId/update-services', (req, res) => {
+  const updatedFields = {};
+
+  if (req.body.services) {
+    updatedFields.services = req.body.services;
+  }
+  
+
+  UserChef.findOneAndUpdate({ _id: req.params.userChefId }, { $set: updatedFields }, { new: true })
+    .then(updatedUser => {
+      if (updatedUser) {
+        res.json({ result: true, updatedUser });
+      } else {
+        res.status(404).json({ result: false, error: 'UserChef not found' });
+      }
+    });
+});
+
+// Supprimer un UserChef
+router.delete("/:userChefId/delete", (req, res) => {
+  UserChef.deleteOne({ _id: req.params.userChefId }).then(dataDeleted => {
+    if (dataDeleted.deletedCount === 0) {
+      res.status(500).json({ result: false, error: "Unable to delete" });
+    } else {
+      res.json({ result: true });
+    }
+  });
+});
+
+
 module.exports = router;
