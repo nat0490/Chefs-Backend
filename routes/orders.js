@@ -7,6 +7,7 @@ const { checkBody } = require('../modules/checkBody');
 
 
 //ENREGISTRER UNE COMMANDE => Test TC OK
+//STATUS DE LA COMMANDE A RAJOUTER QUAND?
 router.post('/add', (req,res)=> {
     if (!checkBody(req.body, ['recipes', 'userConnexion', 'montant', 'date'])) {
         res.status(500).json({ result: false, error: 'Missing or empty fields' });

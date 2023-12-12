@@ -9,12 +9,14 @@ const adresseSchema = mongoose.Schema({
 const userProfilSchema = mongoose.Schema({
     nom: String,
     prenom: String,
+    dateOfBirth: Date,
     adresse: adresseSchema,
     tel: String,
     chef: Boolean,
     userConnexion: {type: mongoose.Schema.Types.ObjectId, ref: 'userConnexion'},
     orders: [{type: mongoose.Schema.Types.ObjectId, ref: 'orders'}],
-    userPreference: [{type: mongoose.Schema.Types.ObjectId, ref: 'userPreference'}]
+    userPreference: [String]
+    //userPreference: [{type: mongoose.Schema.Types.ObjectId, ref: 'userPreference'}]
 })
 
 const UserProfil = mongoose.model('userProfil', userProfilSchema);

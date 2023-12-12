@@ -9,7 +9,7 @@ const UserConnexion = require('../models/userConnexion');
 //créer un userProfil => Test TC OK
 router.post('/create/:userConnexionId', (req, res) => {
     //Toutes les infos sont demandé d'un coup
-    if (!checkBody(req.body, ['nom', 'prenom', 'tel', 'rue', 'ville', 'codePostal', 'chef'])) {
+    if (!checkBody(req.body, ['nom', 'prenom', 'dateOfBirth', 'tel', 'rue', 'ville', 'codePostal', 'chef'])) {
       res.status(500).json({ result: false, error: 'Missing or empty fields' });
       return;
     }
@@ -20,6 +20,7 @@ router.post('/create/:userConnexionId', (req, res) => {
           userConnexion: req.params.userConnexionId,
           nom: req.body.nom,
           prenom: req.body.prenom,
+          dateOfBirth: req.body.dateOfBirth,
           adresse: {
             rue: req.body.rue,
             ville: req.body.ville,
@@ -74,6 +75,113 @@ router.get('/chef/:userProfilId', (req, res) => {
       res.status(500).json({ result: false, message: 'Erreur serveur' });
     });
 });
+
+//AJOUTER UNE PREFERENCE => Test TC OK
+router.put("/add-preference/:userProfilId", (req, res) => {
+  const { userProfilId } = req.params;
+  const { userPreference } = req.body;
+  UserProfil.findOne({ _id: userProfilId })
+    .then(data => {
+      //console.log(data.userPreference);
+      const samePreference = data.userPreference.filter(e => e === userPreference);
+      if(samePreference.length === 0) {
+        UserProfil.updateOne(
+          { _id: userProfilId },
+          { $push: { userPreference } }
+        ).then((data) => {
+          if (data.acknowledged === false) {
+            res.status(500).json({ result: false, error: "noMatch" });
+          } else {
+            res.json({ result: true });
+          }
+        });
+      } else {
+        res.json({ result: false, message: "preference alrady exist"})
+      }
+    })
+});
+
+//SUPPRIMER UNE PREFERENCE => Test TC OK
+router.put("/remove-preference/:userProfilId", (req, res) => {
+  const { userProfilId } = req.params;
+  const { userPreference } = req.body;
+  UserProfil.findOne({ _id: userProfilId , })
+    .then(data => {
+      
+      if (data) {
+        if(data.userPreference.some(e=> e === userPreference )) {
+          const removePreference = data.userPreference.filter(e => e !== userPreference);
+          UserProfil.updateOne(
+            { _id: userProfilId },
+            { $set: { userPreference: removePreference }}
+          ).then((data => {
+            if (data.acknowledged === false) {
+              res.status(500).json({ result: false, error: "noMatch" });
+            } else {
+              res.json({ result: true, message: 'Preference remove' });
+            }
+          }));
+        } else {
+          res.json({result: false, message: "this preference don't exist here"})
+        }
+      } else {
+        res.json({result: false, message:"user not find"})
+      }
+      }
+)});
+
+
+//AJOUTER UNE COMMANDE => Test TC OK
+router.put("/update-order/:userProfilId", (req, res) => {
+  const { userProfilId } = req.params;
+  const { orderId } = req.body;
+  UserProfil.findOne({ _id: userProfilId })
+    .then(data => {
+      const sameOrder = data.orders.filter(e => e.toString() === orderId);
+      if(sameOrder.length === 0) {
+        UserProfil.updateOne(
+          { _id: userProfilId },
+          { $push: { orders: orderId } }
+        ).then((data) => {
+          if (data.acknowledged === false) {
+            res.status(500).json({ result: false, error: "noMatch" });
+          } else {
+            res.json({ result: true });
+          }
+        });
+      } else {
+        res.json({ result: false, message: "this order alrady exist"})
+      }
+    })
+});
+
+//SUPPRIMER UNE COMMANDE => PAS TESTE
+router.put("/remove-order/:userProfilId", (req, res) => {
+  const { userProfilId } = req.params;
+  const { orderId } = req.body;
+  UserProfil.findOne({ _id: userProfilId , })
+    .then(data => {
+      if (data) {
+        if(data.userPreference.some(e=> e === userPreference )) {
+          const removeOrder = data.orders.filter(e => e.toString() !== orderId);
+          UserProfil.updateOne(
+            { _id: userProfilId },
+            { $set: { userPreference: removeOrder }}
+          ).then((data => {
+            if (data.acknowledged === false) {
+              res.status(500).json({ result: false, error: "noMatch" });
+            } else {
+              res.json({ result: true, message: 'Order remove' });
+            }
+          }));
+        } else {
+          res.json({result: false, message: "this preference don't exist here"})
+        }
+      } else {
+        res.json({result: false, message:"user not find"})
+      }
+      }
+)});
 
 //METTRE A JOUR SON ADRESSE => Test TC OK
 router.put('/:userId/update-adresse', async (req, res) => {
