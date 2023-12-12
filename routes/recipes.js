@@ -22,7 +22,8 @@ router.post('/newrecipes/:chefId', (req, res) => {
         image: req.body.image,
         time: req.body.time,
         type: req.body.type,
-        notes: req.body.notes,
+        //=> note client donc pas obligatoire lors de la création d'une recette
+        //notes: req.body.notes,
         prix: {
           minimum: req.body.minimum,
           personneSup: req.body.personneSup,

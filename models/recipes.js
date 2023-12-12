@@ -22,7 +22,9 @@ const recipesSchema = mongoose.Schema({
     notes: String,
     //=> moyenne des votes
     prix: prixSchema,
-    ustensils: [{type: mongoose.Schema.Types.ObjectId, ref: 'ustensils'}],
+    //=> mis string pour pouvoir envoyer des données
+    ustensils: String,
+    //ustensils: {type: mongoose.Schema.Types.ObjectId, ref: 'ustensils'},
     //ustensils: [ustensilSchema],
     ingredients: [ingredientsSchema],
 })
