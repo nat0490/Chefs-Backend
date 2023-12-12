@@ -5,8 +5,6 @@ const Order = require('../models/orders');
 const { checkBody } = require('../modules/checkBody');
 
 
-//AUCUN TEST EFFECTUE SUR CES ROUTES
-//EN ATTENTE DE RECETTES
 
 //ENREGISTRER UNE COMMANDE => Test TC OK
 router.post('/add', (req,res)=> {
@@ -29,16 +27,22 @@ router.post('/add', (req,res)=> {
     );
 
 
-//VOIR TOUTES LES COMMANDES D'UN CLIENT => Test NOK quand user existe pas
-router.get('/all/user/:UserConnexionId', (req,res) => {
-    Order.find({ userConnexion: req.params.UserConnexionId})
+//VOIR TOUTES LES COMMANDES D'UN CLIENT => Test TC OK
+//TOMBE EN ERROR 500 SI SE N'EST PAS UN ID
+router.get('/all/user/:UserConnexionId', (req, res) => {
+    Order.find({ userConnexion: req.params.UserConnexionId })
         .then(data => {
-            if (data) {
-                res.json({ result: true, orders: data})
+            console.log(data);
+            if (data && data.length > 0) {
+                res.json({ result: true, orders: data })
             } else {
-                res.json({ result: false, message: "no order for this user"})
+                res.json({ result: false, message: "no order for this user" })
             }
         })
+        .catch(error => {
+            console.error(error);
+            res.status(500).json({ result: false, error: 'Internal Server Error' });
+        });
 })
 
 //VOIR TOUTES LES COMMANDES POUR UN CHEF => Ca m'a l'air ok sur TC!
@@ -66,7 +70,7 @@ router.get('/all/chef/:ChefId', (req, res) => {
         });
 });
 
-//VOIR TOUTES LES COMMANDES
+//VOIR TOUTES LES COMMANDES => test TC OK
 router.get('/all', (req,res) => {
     Order.find()
         .then(data => {
