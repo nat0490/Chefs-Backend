@@ -19,16 +19,12 @@ router.post('/upgradeToChef/:userId', (req, res) => {
 
         newUserChef.save().then(newDoc => {
           res.json({ result: true, newDoc });
-        }).catch(err => {
-          res.status(500).json({ result: false, error: 'Error saving user chef details', err });
-        });
+        })
       } else {
         res.status(500).json({ result: false, error: 'Profile already exists for this user' });
       }
     })
-    .catch(err => {
-      res.status(500).json({ result: false, error: 'Error finding user profile', err });
-    });
+    
 });
 
 
@@ -44,10 +40,7 @@ router.get('/:userChefId', (req, res) => {
         res.json({ result: false, message: "UserChef profile not found" });
       }
     })
-    .catch(error => {
-      console.error(error);
-      res.status(500).json({ result: false, message: 'Server error' });
-    });
+    
 });
 
 
