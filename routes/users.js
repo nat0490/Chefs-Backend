@@ -1,7 +1,7 @@
 var express = require('express');
 var router = express.Router();
-
 const UserConnexion = require('../models/userConnexion');
+const UserProfil = require('../models/userProfil');
 const { checkBody } = require('../modules/checkBody');
 const uid2 = require('uid2');
 const bcrypt = require('bcrypt');
@@ -10,30 +10,65 @@ const bcrypt = require('bcrypt');
 
 
 //créer un user pour connexion => Test TC OK
-router.post('/signup', (req, res) => {
-  if (!checkBody(req.body, ['username', 'password', 'email'])) {
-    res.status(500).json({ result: false, error: 'Missing or empty fields' });
-    return;
-  }
-  //Find if user already existe
-  UserConnexion.findOne({ /*username: req.body.username ||*/ email: req.body.email }).then(data => {
-    if (data === null) {
-      //user don't exist = create user
+  router.post('/signup', async (req, res) => {
+    try {
+      // Vérifiez les champs requis
+      if (!checkBody(req.body, ['password', 'email'])) { // Ajouter les nom des input une a la suite de l'autres
+        return res.status(500).json({ result: false, error: 'Missing or empty fields' });
+      }
+      // Créez un nouvel utilisateur de profil
+      const newUserProfil = new UserProfil({
+        nom: req.body.nom,
+        prenom: req.body.prenom,
+        adresse: {
+          rue: req.body.rue,
+          ville: req.body.ville,
+          codePostal: req.body.codePostal,
+        },
+        tel: req.body.tel,
+        chef: false,
+      });
+      const savedUserProfil = await newUserProfil.save();
+  
+      // Créez un nouvel utilisateur de connexion
       const hash = bcrypt.hashSync(req.body.password, 10);
-      const newUser = new UserConnexion({
-        username: req.body.username,
+      const newUserConnexion = new UserConnexion({
         email: req.body.email,
         password: hash,
         token: uid2(32),
+        userProfile: savedUserProfil._id, // Utilisation de la clé étrangère
       });
-      newUser.save().then(newDoc => {
-        res.json({ result: true, newDoc });
-      });
-    } else {
-      // User aldready exist
-      res.status(500).json({ result: false, error: 'User already exists' });
-    }
-  });
+      const savedUserConnexion = await newUserConnexion.save();
+  
+      res.json({ result: true, savedUserConnexion, savedUserProfil });
+  
+    } catch (error) {
+      console.error('Erreur lors de la création de l\'utilisateur et du profil :', error);
+      res.status(500).json({ result: false, error: 'Internal Server Error' });
+    }  
+  // if (!checkBody(req.body, ['username', 'password', 'email'])) {
+  //   res.status(500).json({ result: false, error: 'Missing or empty fields' });
+  //   return;
+  // }
+  // //Find if user already existe
+  // UserConnexion.findOne({ /*username: req.body.username ||*/ email: req.body.email }).then(data => {
+  //   if (data === null) {
+  //     //user don't exist = create user
+  //     const hash = bcrypt.hashSync(req.body.password, 10);
+  //     const newUser = new UserConnexion({
+  //       username: req.body.username,
+  //       email: req.body.email,
+  //       password: hash,
+  //       token: uid2(32),
+  //     });
+  //     newUser.save().then(newDoc => {
+  //       res.json({ result: true, newDoc });
+  //     });
+  //   } else {
+  //     // User aldready exist
+  //     res.status(500).json({ result: false, error: 'User already exists' });
+  //   }
+  // });
   });
 
   //Connecter un user => Test TC OK
@@ -43,14 +78,18 @@ router.post('/signup', (req, res) => {
       res.status(500).json({ result: false, error: 'Missing or empty fields' });
       return;
     }
-  
     UserConnexion.findOne({ email: req.body.email }).then(data => {
       if (data && bcrypt.compareSync(req.body.password, data.password)) {
-        res.json({ result: true, data });
+        const id_userProfile = data.userProfile
+        UserProfil.findById(id_userProfile).then(userProfile => {
+          res.json({ result: true, dataUserConnexion: data , dataUserProfils : userProfile });
+        }
+        )
       } else {
         res.status(500).json({ result: false, error: 'User not found or wrong password' });
       }
     });
+
   });
 
   //modifier psw => Test TC OK

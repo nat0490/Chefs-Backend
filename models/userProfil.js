@@ -12,7 +12,6 @@ const userProfilSchema = mongoose.Schema({
     adresse: adresseSchema,
     tel: String,
     chef: Boolean,
-    userConnexion: {type: mongoose.Schema.Types.ObjectId, ref: 'userConnexion'},
     orders: [{type: mongoose.Schema.Types.ObjectId, ref: 'orders'}],
     userPreference: [{type: mongoose.Schema.Types.ObjectId, ref: 'userPreference'}]
 })
@@ -20,3 +19,4 @@ const userProfilSchema = mongoose.Schema({
 const UserProfil = mongoose.model('userProfil', userProfilSchema);
 
 module.exports = UserProfil;
+   
