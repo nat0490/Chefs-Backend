@@ -39,9 +39,30 @@ router.post('/create/:userConnexionId', (req, res) => {
   );
 });
 
-//RECUPERER TOUTES LES INFOS D'UN USER => Test TC OK sauf pour userPreference & orders
+//RECUPERER TOUTES LES INFOS D'UN USER AVEC SON ID => Test TC OK sauf pour userPreference & orders
 router.get('/:userProfilId', (req, res) => {
   UserProfil.findOne({ _id : req.params.userProfilId})
+    .populate("adresse")
+    //.populate("userPreference")
+    //.populate("orders")
+    .populate("userConnexion")
+    .exec()
+    .then((data) => {
+      if (data) {
+        res.json({result: true, data})
+      } else {
+        res.json({result: false, message: "profil utilisateur non trouvé"})
+      }
+    })
+    .catch((error) => {
+      console.error(error);
+      res.status(500).json({ result: false, message: 'Erreur serveur' });
+    });
+});
+
+//RECUPERER TOUTES LES INFOS D'UN USER AVEC SON IDCONNEXION => Test TC OK sauf pour userPreference & orders
+router.get('/:userConnexionlId', (req, res) => {
+  UserProfil.findOne({ userConnexion : req.params.userConnexion})
     .populate("adresse")
     //.populate("userPreference")
     //.populate("orders")
@@ -269,7 +290,7 @@ router.delete("/delete", (req, res) => {
     });
   }
 });
-  
+
    
   
 module.exports = router;
