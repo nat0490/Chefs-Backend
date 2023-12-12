@@ -5,8 +5,9 @@ const mongoose = require('mongoose');
 const ordersSchema = mongoose.Schema({
     recipes: {type: mongoose.Schema.Types.ObjectId, ref: 'recipes'},
     userConnexion: {type: mongoose.Schema.Types.ObjectId, ref: 'userConnexion'},
-    //userChef: {type: mongoose.Schema.Types.ObjectId, ref: 'userChef'},
+    status: String,
     montant: Number,
+    //format: 2023-12-01T12:30:00.000Z
     date: Date,
 })
 

@@ -13,7 +13,7 @@ var userChefRouter = require('./routes/userChef');
 var recipesRouter = require('./routes/recipes');
 var ordersRouter = require('./routes/orders');
 var feedbackRouter = require('./routes/feedback');
-
+var userPreferenceRouter = require('./routes/userPreference');
 const cors = require('cors');
 
 var app = express();
@@ -32,5 +32,5 @@ app.use('/users/chef', userChefRouter);
 app.use('/recipes', recipesRouter);
 app.use('/orders', ordersRouter);
 app.use('/feedback', feedbackRouter);
-
+app.use('/userPreference', userPreferenceRouter);
 module.exports = app;

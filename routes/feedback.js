@@ -4,9 +4,8 @@ var router = express.Router();
 const Feedback = require('../models/feedback');
 const { checkBody } = require('../modules/checkBody');
 
-//EN ATTENTE DE RECETTE POUR TESTER
 
-//CRER UN FEEDBACK
+//CRER UN FEEDBACK => Test TC OK
 router.post('/create', (req,res) => {
     if (!checkBody(req.body, ['userProfil', 'recipes', 'rating', 'commentaire', 'date'])) {
         res.status(500).json({ result: false, error: 'Missing or empty fields' });
@@ -25,15 +24,15 @@ router.post('/create', (req,res) => {
       }
 })
 
-//MODIFIER UN COMMENTAIRE
+//MODIFIER UN COMMENTAIRE => Test TC OK
 router.put('/:feedbackId/update-commentaire', (req,res) => {
-    Feedback.findOne({ id: req.params.feedbackId})
+    Feedback.findOne({ _id: req.params.feedbackId})
         .then(data => {
             if (data) {
-                Feedback.updateOne({
-                    id: req.params.feedbackId,
-                    commentaire: req.params.commentaire,
-                }).then((data => {
+                Feedback.updateOne(
+                  { _id: req.params.feedbackId },
+                  { $set: { commentaire: req.body.commentaire }}
+                  ).then((data => {
                     if (data.acknowledged === false) {
                       res.status(500).json({ result: false, error: "noMatch" });
                     } else {
@@ -47,15 +46,15 @@ router.put('/:feedbackId/update-commentaire', (req,res) => {
 })
 
 
-//MODIFIER UNE NOTE
+//MODIFIER UNE NOTE => Test TC OK
 router.put('/:feedbackId/update-rating', (req,res) => {
-    Feedback.findOne({ id: req.params.feedbackId})
+    Feedback.findOne({ _id: req.params.feedbackId})
         .then(data => {
             if (data) {
-                Feedback.updateOne({
-                    id: req.params.feedbackId,
-                    rating: req.params.rating,
-                }).then((data => {
+                Feedback.updateOne(
+                  { _id: req.params.feedbackId },
+                  { $set: { rating: req.body.rating }}
+                ).then((data => {
                     if (data.acknowledged === false) {
                       res.status(500).json({ result: false, error: "noMatch" });
                     } else {
@@ -69,25 +68,29 @@ router.put('/:feedbackId/update-rating', (req,res) => {
 })
 
 
-//FEEDBACK POUR UN PLAT (pour faire sa note moyenne)
+//FEEDBACK POUR UN PLAT (+ afficher sa note moyenne?) => test TC OK
 router.get("/findRecipe", (req,res) => {
-    if (!req.body.recipesId) {
+    if (!req.body.recipeId) {
         res.status(500).json({ result: false, error: 'Missing or empty fields' });
         return;
     } else {
-        Feedback.find({recipes: req.body.recipesId})
+        Feedback.find({recipes: req.body.recipeId})
         .then(data => {
-            if (data) {
-                res.json({ result: true, recipes: data})
+          console.log(data);
+            if (data && data.length > 0) {
+              //calcule note moyenne
+              const ratings = data.map(feedback => feedback.rating);
+              const noteMoyenne = ratings.reduce((total, rating) => total + rating, 0) / ratings.length;
+                res.json({ result: true, recipes: data, noteMoyenne })
             } else { res.json({result: false, message: 'no data found'})}
         })
     }
 });
     
 
-//SUPPRIMER UN FEEDBACK
+//SUPPRIMER UN FEEDBACK => Test TC OK
 router.delete("/delete", (req, res) => {
-    if (req.body.id === "") {
+    if (!req.body.id) {
       res.status(500).json({ result: false, error: "Missing fields" });
     } else {
       Feedback.deleteOne({ _id: req.body.id }).then((dataDeleted) => {
@@ -95,7 +98,7 @@ router.delete("/delete", (req, res) => {
         if (dataDeleted.deletedCount === 0) {
           res.status(500).json({ result: false, error: "Impossible to delete" });
         } else {
-          res.json({ result: true });
+          res.json({ result: true, message: 'feedback delete' });
         }
       });
     }

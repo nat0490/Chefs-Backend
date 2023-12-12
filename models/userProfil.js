@@ -9,6 +9,7 @@ const adresseSchema = mongoose.Schema({
 const userProfilSchema = mongoose.Schema({
     nom: String,
     prenom: String,
+    dateOfBirth: Date,
     adresse: adresseSchema,
     tel: String,
     chef: Boolean,
