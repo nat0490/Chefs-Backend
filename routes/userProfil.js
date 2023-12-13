@@ -45,28 +45,6 @@ router.get('/:userProfilId', (req, res) => {
     .populate("adresse")
     //.populate("userPreference")
     //.populate("orders")
-    .populate("userConnexion")
-    .exec()
-    .then((data) => {
-      if (data) {
-        res.json({result: true, data})
-      } else {
-        res.json({result: false, message: "profil utilisateur non trouvé"})
-      }
-    })
-    .catch((error) => {
-      console.error(error);
-      res.status(500).json({ result: false, message: 'Erreur serveur' });
-    });
-});
-
-//RECUPERER TOUTES LES INFOS D'UN USER AVEC SON IDCONNEXION => Test TC OK sauf pour userPreference & orders
-router.get('/:userConnexionlId', (req, res) => {
-  UserProfil.findOne({ userConnexion : req.params.userConnexion})
-    .populate("adresse")
-    //.populate("userPreference")
-    //.populate("orders")
-    .populate("userConnexion")
     .exec()
     .then((data) => {
       if (data) {

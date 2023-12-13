@@ -64,8 +64,7 @@ router.post('/signup', async (req, res) => {
   //   if (data === null) {
   //     //user don't exist = create user
   //     const hash = bcrypt.hashSync(req.body.password, 10);
-  //     const newUser = new UserConnexion({
-  //       username: req.body.username,
+  //     const newUser = new UserConnexion({      
   //       email: req.body.email,
   //       password: hash,
   //       token: uid2(32),
@@ -162,29 +161,7 @@ router.put('/:userId/update-password', async (req, res) => {
     })
   });
   
-  //modifier username => Test TC OK
-  router.put('/:userId/update-username', async (req, res) => {
-    const { userId } = req.params;
-    const { newUserName } = req.body;
-    //Vérifier si le nouveau username est identique à l'ancien
-    UserConnexion.findOne( {_id: userId})
-    .then((data)=> {
-      if (data.username === newUserName) {
-        res.json({ result: false, message: 'Same Username'})
-      } else {
-        UserConnexion.updateOne(
-          { _id: userId },
-          { $set: { username: newUserName }}
-          ).then((data => {
-            if (data.acknowledged === false) {
-              res.status(500).json({ result: false, error: "noMatch" });
-            } else {
-              res.json({ result: true, message: 'Username change' });
-            }
-          }));
-      }
-    })
-  });
+ 
 
   //supprimer un compte => Test TC OK
   //coté FRONT: demander PW + email
