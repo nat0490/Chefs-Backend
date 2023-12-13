@@ -82,25 +82,48 @@ router.post('/signup', async (req, res) => {
 
   
 
-  //Connecter un user => Test TC OK
-  router.post('/signin', (req, res) => {
+
+
+
+  
+//SE CONNECTER
+router.post('/signin', (req, res) => {
     //connection via email et PW
     if (!checkBody(req.body, ['email', 'password'])) {
       res.status(500).json({ result: false, error: 'Missing or empty fields' });
       return;
     }
-    UserConnexion.findOne({ email: req.body.email }).then(data => {
-      if (data && bcrypt.compareSync(req.body.password, data.password)) {
-        const id_userProfile = data.userProfile
-        UserProfil.findById(id_userProfile).then(userProfile => {
-          res.json({ result: true, dataUserConnexion: data , dataUserProfils : userProfile });
+    UserConnexion.findOne({ email: req.body.email })
+      .populate("userProfile")
+      .then(data => {
+        if (data && bcrypt.compareSync(req.body.password, data.password)) {
+          const id_userProfile = data.userProfile
+          UserProfil.findById(id_userProfile).then(userProfile => {
+            res.json({ result: true, dataUserConnexion: data , dataUserProfils : userProfile });
+          }
+          )
+        } else {
+          res.status(500).json({ result: false, error: 'User not found or wrong password' });
         }
-        )
-      } else {
-        res.status(500).json({ result: false, error: 'User not found or wrong password' });
-      }
     });
 
+  });
+
+//RECUPERER TOUTES LES INFOS D'UN USER
+router.get('/:userConnexionId', (req, res) => {
+    UserConnexion.findOne({ _id : req.params.userConnexionId})
+      .populate("userProfile")
+      .then((data) => {
+        if (data) {
+          res.json({result: true, data})
+        } else {
+          res.json({result: false, message: "profil utilisateur non trouvé", data})
+        }
+      })
+      .catch((error) => {
+        console.error(error);
+        res.status(500).json({ result: false, message: 'Erreur serveur' });
+      });
   });
 
 //modifier psw => Test TC OK
