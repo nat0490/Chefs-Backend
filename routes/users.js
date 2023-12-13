@@ -10,16 +10,20 @@ const bcrypt = require('bcrypt');
 
 
 //créer un user pour connexion => Test TC OK
-  router.post('/signup', async (req, res) => {
-    try {
-      // Vérifiez les champs requis
-      if (!checkBody(req.body, ['password', 'email'])) { // Ajouter les nom des input une a la suite de l'autres
-        return res.status(500).json({ result: false, error: 'Missing or empty fields' });
-      }
+router.post('/signup', async (req, res) => {
+  if (!checkBody(req.body, ['password', 'email'])) {
+    return res.status(500).json({ result: false, error: 'Missing or empty fields' });
+  }
+
+  try {
+    const existingUser = await UserConnexion.findOne({ email: req.body.email });
+
+    if (!existingUser) {
       // Créez un nouvel utilisateur de profil
       const newUserProfil = new UserProfil({
         nom: req.body.nom,
         prenom: req.body.prenom,
+        dateOfBirth : req.body.dateOfBirth,
         adresse: {
           rue: req.body.rue,
           ville: req.body.ville,
@@ -28,8 +32,9 @@ const bcrypt = require('bcrypt');
         tel: req.body.tel,
         chef: false,
       });
+
       const savedUserProfil = await newUserProfil.save();
-  
+
       // Créez un nouvel utilisateur de connexion
       const hash = bcrypt.hashSync(req.body.password, 10);
       const newUserConnexion = new UserConnexion({
@@ -38,14 +43,18 @@ const bcrypt = require('bcrypt');
         token: uid2(32),
         userProfile: savedUserProfil._id, // Utilisation de la clé étrangère
       });
+
       const savedUserConnexion = await newUserConnexion.save();
-  
+
       res.json({ result: true, savedUserConnexion, savedUserProfil });
-  
-    } catch (error) {
-      console.error('Erreur lors de la création de l\'utilisateur et du profil :', error);
-      res.status(500).json({ result: false, error: 'Internal Server Error' });
-    }  
+    } else {
+      res.status(500).json({ result: false, error: 'Un compte est déjà créé avec cette adresse email' });
+    }
+  } catch (error) {
+    console.error('Erreur lors de la création de l\'utilisateur et du profil :', error);
+    res.status(500).json({ result: false, error: 'Internal Server Error' });
+  }
+});
   // if (!checkBody(req.body, ['username', 'password', 'email'])) {
   //   res.status(500).json({ result: false, error: 'Missing or empty fields' });
   //   return;
@@ -69,7 +78,9 @@ const bcrypt = require('bcrypt');
   //     res.status(500).json({ result: false, error: 'User already exists' });
   //   }
   // });
-  });
+
+
+  
 
   //Connecter un user => Test TC OK
   router.post('/signin', (req, res) => {
