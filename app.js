@@ -14,6 +14,8 @@ var recipesRouter = require('./routes/recipes');
 var ordersRouter = require('./routes/orders');
 var feedbackRouter = require('./routes/feedback');
 var userPreferenceRouter = require('./routes/userPreference');
+var ustensilsRouter = require('./routes/ustensils');
+
 const cors = require('cors');
 
 var app = express();
@@ -33,4 +35,5 @@ app.use('/recipes', recipesRouter);
 app.use('/orders', ordersRouter);
 app.use('/feedback', feedbackRouter);
 app.use('/userPreference', userPreferenceRouter);
+app.use('/ustensils', ustensilsRouter);
 module.exports = app;
