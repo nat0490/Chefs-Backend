@@ -10,6 +10,7 @@ const bcrypt = require('bcrypt');
 
 
 //créer un user pour connexion => Test TC OK
+
 router.post('/signup', async (req, res) => {
   if (!checkBody(req.body, ['password', 'email'])) {
     return res.status(500).json({ result: false, error: 'Missing or empty fields' });
@@ -102,9 +103,10 @@ router.post('/signup', async (req, res) => {
 
   });
 
-  //modifier psw => Test TC OK
-router.put('/:userId/update-password', async (req, res) => {
-  const { userId } = req.params;
+//modifier psw => Test TC OK
+//ATTENTION!! MODIFER!! PRENDRE TOKEN ET NON ID POUR CHANGER CAR ID NON DANS REDUCER
+router.put('/:userToken/update-password', async (req, res) => {
+  const { userToken } = req.params;
   const { newPassword } = req.body;
   const hashUpdate = bcrypt.hashSync(newPassword, 10);
   //Vérifier si le nouveau PW est identique à l'ancien
@@ -128,12 +130,13 @@ router.put('/:userId/update-password', async (req, res) => {
       })
 });
 
-  //modifier email => Test TC OK
-  router.put('/:userId/update-email', async (req, res) => {
-    const { userId } = req.params;
+//modifier email => Test TC OK
+//ATTENTION!! MODIFER!! PRENDRE TOKEN ET NON ID POUR CHANGER CAR ID NON DANS REDUCER
+  router.put('/:userToken/update-email', async (req, res) => {
+    const { userToken } = req.params;
     const { newEmail } = req.body;
     //Vérifier si le nouveau email est identique à l'ancien
-    UserConnexion.findOne( {_id: userId})
+    UserConnexion.findOne( {token: userToken})
       .then((data)=> {
         if (data.email === newEmail) {
           res.json({ result: false, message: 'Same Email'})
