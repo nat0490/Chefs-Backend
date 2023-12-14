@@ -133,7 +133,7 @@ router.put('/:userToken/update-password', async (req, res) => {
   const { newPassword } = req.body;
   const hashUpdate = bcrypt.hashSync(newPassword, 10);
   //Vérifier si le nouveau PW est identique à l'ancien
-  UserConnexion.findOne( {_id: userId})
+  UserConnexion.findOne( {token: userToken})
       .then((data)=> {
         if (bcrypt.compareSync(newPassword, data.password)) {
           res.json({ result: false, message: 'Same Password'})
