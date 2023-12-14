@@ -52,7 +52,6 @@ router.post('/newrecipes/:userChefId', (req, res) => {
 // Récupérer les informations d'une recette spécifique
 router.get('/:recipeId', (req, res) => {
   const recipeId = req.params.recipeId;
-
   Recipes.findOne({ _id: recipeId })
     .then(recipe => {
       if (recipe) {
