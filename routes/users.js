@@ -133,14 +133,14 @@ router.put('/:userToken/update-password', async (req, res) => {
   const { newPassword } = req.body;
   const hashUpdate = bcrypt.hashSync(newPassword, 10);
   //Vérifier si le nouveau PW est identique à l'ancien
-  UserConnexion.findOne( {_id: userId})
+  UserConnexion.findOne( {token: userToken})
       .then((data)=> {
         if (bcrypt.compareSync(newPassword, data.password)) {
           res.json({ result: false, message: 'Same Password'})
         } else {
           //PW différent donc modif du PW
           UserConnexion.updateOne(
-          { _id: userId },
+          { token: userToken },
           { $set: { password: hashUpdate }}
           ).then((data => {
             if (data.acknowledged === false) {
@@ -172,7 +172,7 @@ router.put('/:userToken/update-password', async (req, res) => {
             } else {
               UserConnexion.updateOne(
                 //Email dif donc on change
-                { _id: userId },
+                { token: userToken },
                 { $set: { email: newEmail }}
                 ).then((data => {
                   if (data.acknowledged === false) {
