@@ -140,7 +140,7 @@ router.put('/:userToken/update-password', async (req, res) => {
         } else {
           //PW différent donc modif du PW
           UserConnexion.updateOne(
-          { _id: userId },
+          { token: userToken },
           { $set: { password: hashUpdate }}
           ).then((data => {
             if (data.acknowledged === false) {
@@ -172,7 +172,7 @@ router.put('/:userToken/update-password', async (req, res) => {
             } else {
               UserConnexion.updateOne(
                 //Email dif donc on change
-                { _id: userId },
+                { token: userToken },
                 { $set: { email: newEmail }}
                 ).then((data => {
                   if (data.acknowledged === false) {
