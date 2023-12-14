@@ -42,9 +42,7 @@ router.post('/newrecipes/:userChefId', (req, res) => {
         .then(savedRecipe => {
           res.status(201).json({ result: true, savedRecipe });
         })
-        .catch(err => {
-          res.status(500).json({ result: false, error: 'Error creating recipe', err });
-        });
+        
     })
     
     

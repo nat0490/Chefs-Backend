@@ -13,20 +13,18 @@ const ingredientsSchema = mongoose.Schema({
 })
 
 const recipesSchema = mongoose.Schema({
-    userChef: {type: mongoose.Schema.Types.ObjectId, ref: 'userChef'},
+    userChef: { type: mongoose.Schema.Types.ObjectId, ref: 'userChef' },
     title: String,
     image: String,
     time: String,
-    Feedback: [{type: mongoose.Schema.Types.ObjectId, ref: 'feedback'}],
+    Feedback: [{ type: mongoose.Schema.Types.ObjectId, ref: 'feedback' }],
     type: String,
     notes: String,
-    //=> moyenne des votes
     prix: prixSchema,
-   
-    ustensils: {type: mongoose.Schema.Types.ObjectId, ref: 'ustensils'},
-    
-    ingredients: [ingredientsSchema],
-})
+    ustensils: [{ type: mongoose.Schema.Types.ObjectId, ref: 'ustensils' }], // Tableau de références vers les ustensiles
+    ingredients: [{ingredientsSchema}],
+});
+
 
 const Recipes = mongoose.model('recipes', recipesSchema);
 

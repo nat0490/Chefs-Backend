@@ -10,6 +10,7 @@ const bcrypt = require('bcrypt');
 
 
 //créer un user pour connexion => Test TC OK
+
 router.post('/signup', async (req, res) => {
   if (!checkBody(req.body, ['password', 'email'])) {
     return res.status(500).json({ result: false, error: 'Missing or empty fields' });
@@ -81,30 +82,54 @@ router.post('/signup', async (req, res) => {
 
   
 
-  //Connecter un user => Test TC OK
-  router.post('/signin', (req, res) => {
+
+
+
+  
+//SE CONNECTER
+router.post('/signin', (req, res) => {
     //connection via email et PW
     if (!checkBody(req.body, ['email', 'password'])) {
       res.status(500).json({ result: false, error: 'Missing or empty fields' });
       return;
     }
-    UserConnexion.findOne({ email: req.body.email }).then(data => {
-      if (data && bcrypt.compareSync(req.body.password, data.password)) {
-        const id_userProfile = data.userProfile
-        UserProfil.findById(id_userProfile).then(userProfile => {
-          res.json({ result: true, dataUserConnexion: data , dataUserProfils : userProfile });
+    UserConnexion.findOne({ email: req.body.email })
+      .populate("userProfile")
+      .then(data => {
+        if (data && bcrypt.compareSync(req.body.password, data.password)) {
+          const id_userProfile = data.userProfile
+          UserProfil.findById(id_userProfile).then(userProfile => {
+            res.json({ result: true, dataUserConnexion: data , dataUserProfils : userProfile });
+          }
+          )
+        } else {
+          res.status(500).json({ result: false, error: 'User not found or wrong password' });
         }
-        )
-      } else {
-        res.status(500).json({ result: false, error: 'User not found or wrong password' });
-      }
     });
 
   });
 
-  //modifier psw => Test TC OK
-router.put('/:userId/update-password', async (req, res) => {
-  const { userId } = req.params;
+//RECUPERER TOUTES LES INFOS D'UN USER
+router.get('/:userConnexionId', (req, res) => {
+    UserConnexion.findOne({ _id : req.params.userConnexionId})
+      .populate("userProfile")
+      .then((data) => {
+        if (data) {
+          res.json({result: true, data})
+        } else {
+          res.json({result: false, message: "profil utilisateur non trouvé", data})
+        }
+      })
+      .catch((error) => {
+        console.error(error);
+        res.status(500).json({ result: false, message: 'Erreur serveur' });
+      });
+  });
+
+//modifier psw => Test TC OK
+//ATTENTION!! MODIFER!! PRENDRE TOKEN ET NON ID POUR CHANGER CAR ID NON DANS REDUCER
+router.put('/:userToken/update-password', async (req, res) => {
+  const { userToken } = req.params;
   const { newPassword } = req.body;
   const hashUpdate = bcrypt.hashSync(newPassword, 10);
   //Vérifier si le nouveau PW est identique à l'ancien
@@ -128,12 +153,13 @@ router.put('/:userId/update-password', async (req, res) => {
       })
 });
 
-  //modifier email => Test TC OK
-  router.put('/:userId/update-email', async (req, res) => {
-    const { userId } = req.params;
+//modifier email => Test TC OK
+//ATTENTION!! MODIFER!! PRENDRE TOKEN ET NON ID POUR CHANGER CAR ID NON DANS REDUCER
+  router.put('/:userToken/update-email', async (req, res) => {
+    const { userToken } = req.params;
     const { newEmail } = req.body;
     //Vérifier si le nouveau email est identique à l'ancien
-    UserConnexion.findOne( {_id: userId})
+    UserConnexion.findOne( {token: userToken})
       .then((data)=> {
         if (data.email === newEmail) {
           res.json({ result: false, message: 'Same Email'})

@@ -2,6 +2,8 @@ const express = require('express');
 const router = express.Router();
 const UserChef = require('../models/userChef');
 
+
+// Pour cree un userchef
 router.post('/upgradeToChef/:userId', (req, res) => {
   const userId = req.params.userId;
 
