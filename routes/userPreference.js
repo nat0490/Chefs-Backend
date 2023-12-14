@@ -19,6 +19,12 @@ router.post('/new-preference', async (req, res) => {
 });
 
 
+// Afficher les preference
+router.get('/display_preference', async (req, res) => {
+    UserPreference.find().then(data => {
+        res.status(201).json({ success: true, data });
+       });
+});
 
 
 // Supprimer une préférence utilisateur
