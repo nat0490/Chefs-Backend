@@ -42,7 +42,6 @@ router.get('/:userChefId', (req, res) => {
         res.json({ result: false, message: "UserChef profile not found" });
       }
     })
-    
 });
 
 // Récupérer les informations d'un UserChef par ProfilId
