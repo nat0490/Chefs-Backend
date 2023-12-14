@@ -247,7 +247,7 @@ router.put('/:userId/update-chef', async (req, res) => {
             if (data.acknowledged === false) {
               res.status(500).json({ result: false, error: "noMatch" });
             } else {
-              res.json({ result: true, message: `Statue Chef change to: ${newStatus}` });
+              res.json({ result: true, newStatus });
             }
           }));
   })
