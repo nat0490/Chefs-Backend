@@ -12,7 +12,8 @@ router.post('/upgradeToChef/:userId', (req, res) => {
       if (existingUser === null) {
         const newUserChef = new UserChef({
           spécialisation: req.body.spécialisation,
-          userCompliment: req.body.userCompliment,
+//Viendrons s'ajouter au fur et à mesure des compliments
+          //userCompliment: req.body.userCompliment,
           experience: req.body.experience,
           passion: req.body.passion,
           services: req.body.services,
