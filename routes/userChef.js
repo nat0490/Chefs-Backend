@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const UserChef = require('../models/userChef');
-
+const NodeGeocoder = require('node-geocoder')
 
 // Pour cree un userchef
 router.post('/upgradeToChef/:userId', (req, res) => {
@@ -44,10 +44,6 @@ router.get('/:userChefId', (req, res) => {
     })
     
 });
-
-
-
-
 
 
 
@@ -184,4 +180,69 @@ router.delete("/:userChefId/delete", (req, res) => {
 });
 
 
+;
+
+
+
+
+
+
+// Configuration du géocodeur avec l'API Mapbox
+const options = {
+  provider: 'mapbox',
+  apiKey: 'sk.eyJ1Ijoiam9uYWhhcnQiLCJhIjoiY2xxNmZnOG00MHU4cTJpbnV2dG9xeWo2aCJ9.aLXDwUzwKlUML5cZxklWwg', // Remplace par ton propre jeton d'accès Mapbox
+};
+
+const geocoder = NodeGeocoder(options);
+
+// Route pour récupérer les adresses et les convertir en coordonnées géographiques
+router.get('/userchefs/addresses', async (req, res) => {
+  
+  const chefs = await UserChef.find({}).populate('userProfil');
+
+  if (chefs) {
+    const addresses = [];
+    for (const chef of chefs) {
+      if (chef.userProfil && chef.userProfil.adresse) {
+        const addressDetails = chef.userProfil.adresse;
+        const fullAddress = `${addressDetails.rue}, ${addressDetails.ville}, ${addressDetails.codePostal}`;
+        
+        const result = await geocoder.geocode(fullAddress);
+        if (result.length > 0) {
+          addresses.push({
+            userId: chef._id,
+            address: fullAddress,
+            coordinates: {
+              latitude: result[0].latitude,
+              longitude: result[0].longitude,
+            },
+          });
+        } else {
+          console.error(`Aucun résultat pour ${fullAddress}`);
+        }
+      }
+    }
+    res.json(addresses);
+  } else {
+    res.status(404).json({ message: 'Aucun UserChef trouvé.' });
+  }
+
+});
+
+
+
+
+
+
+
 module.exports = router;
+
+
+
+
+
+
+
+
+
+
