@@ -22,7 +22,7 @@ const recipesSchema = mongoose.Schema({
     notes: String,
     prix: prixSchema,
     ustensils: [{ type: mongoose.Schema.Types.ObjectId, ref: 'ustensils' }], // Tableau de références vers les ustensiles
-    ingredients: [{ingredientsSchema}],
+    ingredients: [ingredientsSchema],
 });
 
 
