@@ -64,6 +64,16 @@ router.get('/:recipeId', (req, res) => {
   
 });
 
+
+// routes pour récup toutes les recettes. TC OK
+router.get('/', (req,res) => {
+  Recipes.find({})
+  .then(recipes => {
+      res.json({ result: true, recipes }) // je veux afficher les recettes 
+  })
+});
+
+
  //METTRE A JOUR  l'image
 router.put('/:recipeId/updateimage', async (req, res) => {
   const { recipeId } = req.params;
@@ -164,8 +174,6 @@ router.put('/:recipeId/updateimage', async (req, res) => {
 
 
 
-
-
  //METTRE A JOUR  le notes 
  router.put('/:recipeId/updatenotes', async (req, res) => {
   const { recipeId } = req.params;
@@ -250,6 +258,7 @@ router.put('/:recipeId/updateingredients', async (req, res) => {
       }
   })
 });
+
 
 
 

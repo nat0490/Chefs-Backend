@@ -13,11 +13,11 @@ const ingredientsSchema = mongoose.Schema({
 })
 
 const recipesSchema = mongoose.Schema({
-    userChef: { type: mongoose.Schema.Types.ObjectId, ref: 'userChef' },
+    userchef: { type: mongoose.Schema.Types.ObjectId, ref: 'userchefs' },
     title: String,
     image: String,
     time: String,
-    Feedback: [{ type: mongoose.Schema.Types.ObjectId, ref: 'feedback' }],
+    feedback: [{ type: mongoose.Schema.Types.ObjectId, ref: 'feedbacks' }],
     type: String,
     notes: String,
     prix: prixSchema,
