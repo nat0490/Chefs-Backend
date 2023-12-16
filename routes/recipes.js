@@ -44,9 +44,9 @@ router.post('/newrecipes/:userChefId', (req, res) => {
       });
       // Sauvegarder la nouvelle recette
       newRecipe.save()
-        .then(savedRecipe => {
-          res.status(201).json({ result: true, savedRecipe });
-          //const newRecipeForChef = new savedRecipe._id
+        .then(data => {
+          res.status(201).json({ result: true, data });
+          
         })
         
     })
