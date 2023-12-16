@@ -85,10 +85,10 @@ router.post('/newrecipesV2/:userChefId', async (req, res) => {
       },
       ustensils: req.body.ustensils,
       ingredients: req.body.ingredients.map(ingredient => ({
-        name: req.ingredient.name,
-        quantity: req.ingredient.quantity,
-        unit: req.ingredient.unit,
-      })
+        name: ingredient.name,
+        quantity: ingredient.quantity,
+        unit: ingredient.unit,
+      }))
     )
   });
 
