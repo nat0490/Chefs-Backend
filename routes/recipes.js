@@ -84,12 +84,13 @@ router.post('/newrecipesV2/:userChefId', async (req, res) => {
         panierCourseParPersonne: req.body.panierCourseParPersonne,
       },
       ustensils: req.body.ustensils,
-      ingredients: {
+      ingredients: req.body.ingredients.map(ingredient => ({
         name: req.body.name,
         quantity: req.body.quantity,
         unit: req.body.unit,
-      },
-    });
+      })
+    )
+  });
 
     // Sauvegarder la nouvelle recette
     const savedRecipe = await newRecipe.save();
