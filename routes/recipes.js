@@ -8,10 +8,11 @@ const { checkBody } = require('../modules/checkBody');
 //Créer une recette
 router.post('/newrecipes/:userChefId', (req, res) => {
   //Vérification des informations saisis
-  if (!checkBody(req.body, ['title', 'image', 'time', 'type', 'minimum', 'personneSup', 'panierCourseParPersonne'/*, 'name', 'quantity', 'unit'*/])) {
-    res.status(500).json({ result: false, error: 'Missing or empty fields' });
-    return;
-  }
+  
+ // if (!checkBody(req.body, ['title', 'image', 'time', 'type', 'minimum', 'personneSup', 'panierCourseParPersonne'/*, 'name', 'quantity', 'unit'*/])) {
+ //   res.status(500).json({ result: false, error: 'Missing or empty fields' });
+ //   return;
+ // }
   const chefId = req.params.userChefId;
   // Vérifier si une recette existe déjà pour ce chef
   Recipes.findOne({ userChef: chefId ,  title: req.body.title, })
