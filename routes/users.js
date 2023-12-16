@@ -32,6 +32,8 @@ router.post('/signup', async (req, res) => {
         },
         tel: req.body.tel,
         chef: false,
+        orders: [],
+        userPreference: []
       });
 
       const savedUserProfil = await newUserProfil.save();

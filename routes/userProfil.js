@@ -27,7 +27,9 @@ router.post('/create/:userConnexionId', (req, res) => {
             codePostal: req.body.codePostal
           },
           tel: req.body.tel,
-          chef: req.body.chef,
+          chef: false,
+          orders: [],
+          userPreference: []
         });
         newProfil.save().then(newDoc => {
           res.json({ result: true, newDoc });
