@@ -18,6 +18,7 @@ router.post('/upgradeToChef/:userId', (req, res) => {
           passion: req.body.passion,
           services: req.body.services,
           userProfil: userId,
+          recipes: [],
         });
 
         newUserChef.save().then(newDoc => {
@@ -29,6 +30,30 @@ router.post('/upgradeToChef/:userId', (req, res) => {
     })
     
 });
+
+//CREER ET AJOUTER UNE RECETTE
+router.put('/addRecipe/:userChefId', (req, res) => {
+  const { userChefId } = req.params;
+  const { recipeId } = req.body;
+  UserChef.findOne({ _id: userChefId})
+    .then(existingUser => {
+      if (existingUser) {
+        UserChef.updateOne(
+          { _id: userChefId },
+          { $push: { recipes: recipeId } }
+        ).then((data) => {
+          //console.log(data);
+          if (data.nModified === 0) {
+            res.status(500).json({ result: false, error: "noMatch" });
+          } else {
+            res.json({ result: true, message: "recipe added" });
+          }
+        });
+      } else {
+        res.json({ result: false, message: "no user found"})
+      }
+    })
+})
 
 
 // Récupérer les informations d'un UserChef par Id

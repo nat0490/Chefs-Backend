@@ -2,19 +2,18 @@ const express = require('express');
 const router = express.Router();
 const Recipes = require('../models/recipes');
 
+
+
+//Créer une recette
 router.post('/newrecipes/:userChefId', (req, res) => {
   const chefId = req.params.userChefId;
-
   // Vérifier si une recette existe déjà pour ce chef
   Recipes.findOne({ userChef: chefId ,  title: req.body.title, })
     .then(existingRecipe => {
       if (existingRecipe) {
-
-      
         // Si une recette existe déjà pour ce chef, renvoyer un message indiquant que la recette existe
         return res.status(400).json({ result: false, error: 'title already exists for this chef' });
       }
-
       // Si aucune recette n'existe pour ce chef, créer une nouvelle recette
       const newRecipe = new Recipes({
         userChef: chefId,
@@ -36,11 +35,11 @@ router.post('/newrecipes/:userChefId', (req, res) => {
           unit: req.body.ingredientsUnit,
         },
       });
-
       // Sauvegarder la nouvelle recette
       newRecipe.save()
         .then(savedRecipe => {
           res.status(201).json({ result: true, savedRecipe });
+          const newRecipeForChef = new savedRecipe._id
         })
         
     })
