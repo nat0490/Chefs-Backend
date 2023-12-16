@@ -89,7 +89,7 @@ router.post('/newrecipesV2/:userChefId', async (req, res) => {
         quantity: ingredient.quantity,
         unit: ingredient.unit,
       }))
-    )
+    
   });
 
     // Sauvegarder la nouvelle recette
