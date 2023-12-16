@@ -8,7 +8,7 @@ const { checkBody } = require('../modules/checkBody');
 //Créer une recette
 router.post('/newrecipes/:userChefId', (req, res) => {
   //Vérification des informations saisis
-  if (!checkBody(req.body, ['title', 'image', 'time', 'type', 'minimum', 'personneSup', 'panierCourseParPersonne', 'name', 'quantity', 'unit'])) {
+  if (!checkBody(req.body, ['title', 'image', 'time', 'type', 'minimum', 'personneSup', 'panierCourseParPersonne'/*, 'name', 'quantity', 'unit'*/])) {
     res.status(500).json({ result: false, error: 'Missing or empty fields' });
     return;
   }
