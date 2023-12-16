@@ -1,6 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const Recipes = require('../models/recipes');
+const UserChef = require('../models/userChef');
 const { checkBody } = require('../modules/checkBody');
 
 
