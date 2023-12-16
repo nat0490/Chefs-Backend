@@ -45,8 +45,8 @@ router.post('/create/:userConnexionId', (req, res) => {
 router.get('/:userProfilId', (req, res) => {
   UserProfil.findOne({ _id : req.params.userProfilId})
     .populate("adresse")
-    //.populate("userPreference")
-    //.populate("orders")
+    .populate("userPreference")
+    .populate("orders")
     .exec()
     .then((data) => {
       if (data) {
