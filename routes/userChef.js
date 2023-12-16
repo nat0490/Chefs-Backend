@@ -12,8 +12,7 @@ router.post('/upgradeToChef/:userId', (req, res) => {
       if (existingUser === null) {
         const newUserChef = new UserChef({
           spécialisation: req.body.spécialisation,
-//Viendrons s'ajouter au fur et à mesure des compliments
-          //userCompliment: req.body.userCompliment,
+          userCompliment: [],
           experience: req.body.experience,
           passion: req.body.passion,
           services: req.body.services,
@@ -112,7 +111,7 @@ router.put('/:userChefId/updatespecialisation', async (req, res) => {
 
 
 // Mettre à jour les userCompliment  d'un UserChef
-router.put('/:userChefId/update', async (req, res) => {
+router.put('/:userChefId/addCompliment', async (req, res) => {
   const { userChefId } = req.params;
   const { newsuserCompliment } = req.body;
   UserChef.findOne( {_id: userChefId})
@@ -122,7 +121,7 @@ router.put('/:userChefId/update', async (req, res) => {
       } else {
         UserChef.updateOne(
           { _id: userChefId },
-          { $set: { spécialisation: newsuserCompliment }}
+          { $push: { userCompliment: newsuserCompliment }}
           ).then((data => {
             if (data.acknowledged === false) {
               res.status(500).json({ result: false, error: "noMatch" });

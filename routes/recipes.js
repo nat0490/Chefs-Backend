@@ -20,6 +20,7 @@ router.post('/newrecipes/:userChefId', (req, res) => {
         title: req.body.title,
         image: req.body.image,
         time: req.body.time,
+        feedback : [],
         type: req.body.type,
         //=> note client donc pas obligatoire lors de la création d'une recette
         //notes: req.body.notes,
@@ -29,11 +30,11 @@ router.post('/newrecipes/:userChefId', (req, res) => {
           panierCourseParPersonne: req.body.panierCourseParPersonne,
         },
         ustensils:req.body.ustensils,
-        ingredients: {
-          name: req.body.ingredientsName,
-          quantity: req.body.ingredientsQuantity,
-          unit: req.body.ingredientsUnit,
-        },
+        ingredients: req.body.ingredients.map(ingredient => ({
+          name: ingredient.name,
+          quantity: ingredient.quantity,
+          unit: ingredient.unit,
+        })),
       });
       // Sauvegarder la nouvelle recette
       newRecipe.save()

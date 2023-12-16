@@ -2,7 +2,7 @@ const mongoose = require('mongoose');
 
 const userChefSchema = mongoose.Schema({
     spécialisation: String,
-    userCompliment: String,
+    userCompliment: [String],
     experience: String,
     passion: String,
     services: String,
