@@ -68,6 +68,7 @@ router.get('/:recipeId', (req, res) => {
 // routes pour récup toutes les recettes. TC OK
 router.get('/', (req,res) => {
   Recipes.find({})
+  .populate('ingredients')
   .then(recipes => {
       res.json({ result: true, recipes }) // je veux afficher les recettes 
   })
