@@ -1,11 +1,17 @@
 const express = require('express');
 const router = express.Router();
 const Recipes = require('../models/recipes');
+const { checkBody } = require('../modules/checkBody');
 
 
 
 //Créer une recette
 router.post('/newrecipes/:userChefId', (req, res) => {
+  //Vérification des informations saisis
+  if (!checkBody(req.body, ['title', 'image', 'time', 'type', 'minimum', 'personneSup', 'panierCourseParPersonne', 'name', 'quantity', 'unit'])) {
+    res.status(500).json({ result: false, error: 'Missing or empty fields' });
+    return;
+  }
   const chefId = req.params.userChefId;
   // Vérifier si une recette existe déjà pour ce chef
   Recipes.findOne({ userChef: chefId ,  title: req.body.title, })
@@ -22,8 +28,7 @@ router.post('/newrecipes/:userChefId', (req, res) => {
         time: req.body.time,
         feedback : [],
         type: req.body.type,
-        //=> note client donc pas obligatoire lors de la création d'une recette
-        //notes: req.body.notes,
+        notes: [],
         prix: {
           minimum: req.body.minimum,
           personneSup: req.body.personneSup,
@@ -63,6 +68,10 @@ router.get('/:recipeId', (req, res) => {
     })
   
 });
+
+
+
+
 
 
 // routes pour récup toutes les recettes. TC OK
@@ -175,28 +184,30 @@ router.put('/:recipeId/updateimage', async (req, res) => {
 
 
 
- //METTRE A JOUR  le notes 
+ //AJOUTER UNE NOTE 
  router.put('/:recipeId/updatenotes', async (req, res) => {
   const { recipeId } = req.params;
   const { newnotes } = req.body;
   Recipes.findOne( {_id: recipeId})
-    .then((data)=> {
-      if (data.notes === newnotes) { //notes identique à l'ancien
-        res.json({ result: false, message: 'Same notes'})
-      } else {
+    .then(recipeFind => {
+      if (recipeFind) { 
         Recipes.updateOne(
           { _id: recipeId },
-          { $set: { notes: newnotes }}
-          ).then((data => {
-            if (data.acknowledged === false) {
-              res.status(500).json({ result: false, error: "noMatch" });
-            } else {
-              res.json({ result: true, message: 'notes change' });
-            }
-          }));
+          { $push: { notes: newnotes }}
+        ).then((data) => {
+          //console.log(data);
+          if (data.nModified === 0) {
+            res.status(500).json({ result: false, error: "noMatch" });
+          } else {
+            res.json({ result: true, message: "note added" });
+          }
+      });
+      } else {
+        res.json({ result: false, message: "no recipe found"})
       }
   })
 });
+
 
 
 //METTRE A JOUR  le prix
