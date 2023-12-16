@@ -36,11 +36,12 @@ router.post('/newrecipes/:userChefId', (req, res) => {
           panierCourseParPersonne: req.body.panierCourseParPersonne,
         },
         ustensils:req.body.ustensils,
-        ingredients: req.body.ingredients.map(ingredient => ({
-          name: ingredient.name,
-          quantity: ingredient.quantity,
-          unit: ingredient.unit,
-        })),
+        ingredients: {//req.body.ingredients.map(ingredient => ({
+          name: req.body.name,
+          quantity: req.body.quantity,
+          unit: req.body.unit,
+        //})
+        },
       });
       // Sauvegarder la nouvelle recette
       newRecipe.save()
@@ -52,6 +53,58 @@ router.post('/newrecipes/:userChefId', (req, res) => {
     })
     
     
+});
+
+
+//CREER UNE RECETTE ET METTRE ID DANS USERCHEF
+router.post('/newrecipesV2/:userChefId', async (req, res) => {
+  try {
+    const chefId = req.params.userChefId;
+
+    // Vérifier si une recette existe déjà pour ce chef
+    const existingRecipe = await Recipes.findOne({ userChef: chefId, title: req.body.title });
+
+    if (existingRecipe) {
+      return res.status(400).json({ result: false, error: 'title already exists for this chef' });
+    }
+
+    // Créer une nouvelle recette
+    const newRecipe = new Recipes({
+      userChef: chefId,
+      title: req.body.title,
+      image: req.body.image,
+      time: req.body.time,
+      feedback: [],
+      type: req.body.type,
+      notes: [],
+      prix: {
+        minimum: req.body.minimum,
+        personneSup: req.body.personneSup,
+        panierCourseParPersonne: req.body.panierCourseParPersonne,
+      },
+      ustensils: req.body.ustensils,
+      ingredients: {
+        name: req.body.name,
+        quantity: req.body.quantity,
+        unit: req.body.unit,
+      },
+    });
+
+    // Sauvegarder la nouvelle recette
+    const savedRecipe = await newRecipe.save();
+
+    // Mettre à jour l'utilisateur chef avec l'ID de la nouvelle recette
+    const updatedUserChef = await UserChef.findOneAndUpdate(
+      { _id: chefId },
+      { $push: { recipes: savedRecipe._id } },
+      { new: true }
+    );
+
+    res.status(201).json({ result: true, data: savedRecipe, updatedUserChef });
+  } catch (error) {
+    console.error('Error:', error);
+    res.status(500).json({ result: false, error: 'Internal Server Error' });
+  }
 });
 
 
