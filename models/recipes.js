@@ -4,13 +4,13 @@ const prixSchema = mongoose.Schema({
     minimum: Number,
     personneSup: Number,
     panierCourseParPersonne: Number,
-})
+});
 
 const ingredientsSchema = mongoose.Schema({
     name: String,
     quantity: Number,
     unit: String,
-})
+});
 
 const recipesSchema = mongoose.Schema({
     userchef: { type: mongoose.Schema.Types.ObjectId, ref: 'userchefs' },
