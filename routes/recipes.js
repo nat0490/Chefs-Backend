@@ -46,7 +46,7 @@ router.post('/newrecipes/:userChefId', (req, res) => {
       newRecipe.save()
         .then(savedRecipe => {
           res.status(201).json({ result: true, savedRecipe });
-          const newRecipeForChef = new savedRecipe._id
+          //const newRecipeForChef = new savedRecipe._id
         })
         
     })
