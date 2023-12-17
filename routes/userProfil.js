@@ -27,7 +27,9 @@ router.post('/create/:userConnexionId', (req, res) => {
             codePostal: req.body.codePostal
           },
           tel: req.body.tel,
-          chef: req.body.chef,
+          chef: false,
+          orders: [],
+          userPreference: []
         });
         newProfil.save().then(newDoc => {
           res.json({ result: true, newDoc });
@@ -43,8 +45,8 @@ router.post('/create/:userConnexionId', (req, res) => {
 router.get('/:userProfilId', (req, res) => {
   UserProfil.findOne({ _id : req.params.userProfilId})
     .populate("adresse")
-    //.populate("userPreference")
-    //.populate("orders")
+    .populate("userPreference")
+    .populate("orders")
     .exec()
     .then((data) => {
       if (data) {
@@ -247,7 +249,7 @@ router.put('/:userId/update-chef', async (req, res) => {
             if (data.acknowledged === false) {
               res.status(500).json({ result: false, error: "noMatch" });
             } else {
-              res.json({ result: true, message: `Statue Chef change to: ${newStatus}` });
+              res.json({ result: true, newStatus });
             }
           }));
   })

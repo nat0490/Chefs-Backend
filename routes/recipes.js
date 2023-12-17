@@ -1,51 +1,112 @@
 const express = require('express');
 const router = express.Router();
 const Recipes = require('../models/recipes');
+const UserChef = require('../models/userChef');
+const { checkBody } = require('../modules/checkBody');
 
+
+
+//Créer une recette
 router.post('/newrecipes/:userChefId', (req, res) => {
+  //Vérification des informations saisis
+  /*
+  if (!checkBody(req.body, ['title', 'image', 'time', 'type', 'minimum', 'personneSup', 'panierCourseParPersonne', 'name', 'quantity', 'unit'])) {
+    res.status(500).json({ result: false, error: 'Missing or empty fields' });
+    return;
+  }*/
   const chefId = req.params.userChefId;
-
   // Vérifier si une recette existe déjà pour ce chef
   Recipes.findOne({ userChef: chefId ,  title: req.body.title, })
     .then(existingRecipe => {
       if (existingRecipe) {
-
-      
         // Si une recette existe déjà pour ce chef, renvoyer un message indiquant que la recette existe
         return res.status(400).json({ result: false, error: 'title already exists for this chef' });
       }
-
       // Si aucune recette n'existe pour ce chef, créer une nouvelle recette
       const newRecipe = new Recipes({
         userChef: chefId,
         title: req.body.title,
         image: req.body.image,
         time: req.body.time,
+        feedback : [],
         type: req.body.type,
-        //=> note client donc pas obligatoire lors de la création d'une recette
-        //notes: req.body.notes,
+        notes: [],
         prix: {
           minimum: req.body.minimum,
           personneSup: req.body.personneSup,
           panierCourseParPersonne: req.body.panierCourseParPersonne,
         },
         ustensils:req.body.ustensils,
-        ingredients: {
-          name: req.body.ingredientsName,
-          quantity: req.body.ingredientsQuantity,
-          unit: req.body.ingredientsUnit,
+        ingredients: {//req.body.ingredients.map(ingredient => ({
+          name: req.body.name,
+          quantity: req.body.quantity,
+          unit: req.body.unit,
+        //})
         },
       });
-
       // Sauvegarder la nouvelle recette
       newRecipe.save()
-        .then(savedRecipe => {
-          res.status(201).json({ result: true, savedRecipe });
+        .then(data => {
+          res.status(201).json({ result: true, data });
+          
         })
         
     })
     
     
+});
+
+
+//CREER UNE RECETTE ET METTRE ID DANS USERCHEF
+router.post('/newrecipesV2/:userChefId', async (req, res) => {
+  try {
+    const chefId = req.params.userChefId;
+
+    // Vérifier si une recette existe déjà pour ce chef
+    const existingRecipe = await Recipes.findOne({ userChef: chefId, title: req.body.title });
+
+    if (existingRecipe) {
+      return res.status(400).json({ result: false, error: 'title already exists for this chef' });
+    }
+
+    // Créer une nouvelle recette
+    const newRecipe = new Recipes({
+      userChef: chefId,
+      title: req.body.title,
+      image: req.body.image,
+      time: req.body.time,
+      feedback: [],
+      type: req.body.type,
+      notes: [],
+      prix: {
+        minimum: req.body.minimum,
+        personneSup: req.body.personneSup,
+        panierCourseParPersonne: req.body.panierCourseParPersonne,
+      },
+      ustensils: req.body.ustensils,
+      ingredients: req.body.ingredients.map(ingredient => ({
+        name: ingredient.name,
+        quantity: ingredient.quantity,
+        unit: ingredient.unit,
+      }))
+    
+  });
+
+    // Sauvegarder la nouvelle recette
+    const savedRecipe = await newRecipe.save();
+
+    // Mettre à jour l'utilisateur chef avec l'ID de la nouvelle recette
+    const updatedUserChef = await UserChef.findOneAndUpdate(
+      { _id: chefId },
+      { $push: { recipes: savedRecipe._id } },
+      { new: true }
+    );
+
+    res.status(201).json({ result: true, data: savedRecipe, updatedUserChef });
+  } catch (error) {
+    console.error('Error:', error);
+    res.status(500).json({ result: false, error: 'Internal Server Error' });
+  }
 });
 
 
@@ -62,6 +123,21 @@ router.get('/:recipeId', (req, res) => {
     })
   
 });
+
+
+
+
+
+
+// routes pour récup toutes les recettes. TC OK
+router.get('/', (req,res) => {
+  Recipes.find({})
+  .populate('ingredients')
+  .then(recipes => {
+      res.json({ result: true, recipes }) // je veux afficher les recettes 
+  })
+});
+
 
  //METTRE A JOUR  l'image
 router.put('/:recipeId/updateimage', async (req, res) => {
@@ -163,30 +239,30 @@ router.put('/:recipeId/updateimage', async (req, res) => {
 
 
 
-
-
- //METTRE A JOUR  le notes 
+ //AJOUTER UNE NOTE 
  router.put('/:recipeId/updatenotes', async (req, res) => {
   const { recipeId } = req.params;
   const { newnotes } = req.body;
   Recipes.findOne( {_id: recipeId})
-    .then((data)=> {
-      if (data.notes === newnotes) { //notes identique à l'ancien
-        res.json({ result: false, message: 'Same notes'})
-      } else {
+    .then(recipeFind => {
+      if (recipeFind) { 
         Recipes.updateOne(
           { _id: recipeId },
-          { $set: { notes: newnotes }}
-          ).then((data => {
-            if (data.acknowledged === false) {
-              res.status(500).json({ result: false, error: "noMatch" });
-            } else {
-              res.json({ result: true, message: 'notes change' });
-            }
-          }));
+          { $push: { notes: newnotes }}
+        ).then((data) => {
+          //console.log(data);
+          if (data.nModified === 0) {
+            res.status(500).json({ result: false, error: "noMatch" });
+          } else {
+            res.json({ result: true, message: "note added" });
+          }
+      });
+      } else {
+        res.json({ result: false, message: "no recipe found"})
       }
   })
 });
+
 
 
 //METTRE A JOUR  le prix
@@ -249,6 +325,48 @@ router.put('/:recipeId/updateingredients', async (req, res) => {
       }
   })
 });
+
+
+
+
+// Fonction utilitaire pour sélectionner des éléments aléatoires dans un tableau
+function getRandomItems(array, numItems) {
+  const shuffled = array.sort(() => 0.5 - Math.random());
+  return shuffled.slice(0, numItems);
+}
+
+// Vos routes pour les recettes viennent ensuite
+router.get('/random', async (req, res) => {
+  try {
+    // Récupérer toutes les recettes depuis la base de données
+    const allRecipes = await Recipes.find();
+
+    // Sélectionner trois recettes aléatoires depuis le résultat
+    const randomRecipes = getRandomItems(allRecipes, 3);
+
+    res.json({ result: true, randomRecipes });
+  } catch (error) {
+    console.error('Error fetching random recipes:', error);
+    res.status(500).json({ result: false, error: 'Internal Server Error' });
+  }
+});
+
+
+// Route pour récupérer les recettes d'un chef spécifique
+router.get('/:chefId/recipes', async (req, res) => {
+  const chefId = req.params.chefId;
+
+  // Récupérer les recettes du chef depuis la base de données en utilisant l'ID du chef
+  Recipes.find({ userchef: chefId })
+    .then(chefRecipes => {
+      res.json({ result: true, chefRecipes });
+    })
+    .catch(error => {
+      console.error('Error fetching chef recipes:', error);
+      res.status(500).json({ result: false, error: 'Internal Server Error' });
+    });
+});
+
 
 
 

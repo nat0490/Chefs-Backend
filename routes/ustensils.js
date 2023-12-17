@@ -141,6 +141,17 @@ router.delete("/:ustensileId/delete", (req, res) => {
     }
   });
 
+// Recupere tous les ustensils 
+  router.get('/all', async (req, res) => {
+    Ustensils.find({})
+      .then(ustensils => {
+        res.json({ result: true, ustensils });
+      })
+      .catch(error => {
+        res.status(500).json({ result: false, error: error.message });
+      });
+  });
+  
 
   
 
