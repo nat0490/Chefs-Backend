@@ -125,7 +125,6 @@ router.get('/:recipeId', (req, res) => {
 });
 
 
-<<<<<<< HEAD
 
 
 
@@ -137,7 +136,10 @@ router.get('/', (req,res) => {
   .then(recipes => {
       res.json({ result: true, recipes }) // je veux afficher les recettes 
   })
-=======
+});
+
+
+
 // Récupérer les informations d'une recette spécifique
 router.get('/displayRecipes', (req, res) => {
   const recipeId = '657f241b4a4338fb4a3d4927';
@@ -154,7 +156,6 @@ router.get('/displayRecipes', (req, res) => {
       console.error('Error retrieving recipes:', error);
       res.status(500).json({ result: false, message: 'Internal server error' });
     });
->>>>>>> christof
 });
 
 
