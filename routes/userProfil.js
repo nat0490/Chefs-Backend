@@ -77,6 +77,42 @@ router.get('/chef/:userProfilId', (req, res) => {
     });
 });
 
+
+
+
+
+
+//AJOUTER UNE RECETTE a sa wishlist
+router.put('/addRecipeWishList/:userId', (req, res) => {
+  const { userId } = req.params;
+  const { recipeId } = req.body;
+  UserProfil.findOne({ _id: userId})
+    .then(existingUser => {
+      if (existingUser) {
+        UserProfil.updateOne(
+          { _id: userId },
+          { $push: { wishList: recipeId } }
+        ).then((data) => {
+          console.log(data);
+          if (data.nModified === 0) {
+            res.status(500).json({ result: false, error: "noMatch" });
+          } else {
+            res.json({ result: true, message: "recipe added" });
+          }
+        });
+      } else {
+        res.json({ result: false, message: "no user found"})
+      }
+    })
+})
+
+
+
+
+
+
+
+
 //AJOUTER UNE PREFERENCE => Test TC OK
 router.put("/add-preference/:userProfilId", (req, res) => {
   const { userProfilId } = req.params;

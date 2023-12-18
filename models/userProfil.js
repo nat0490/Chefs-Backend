@@ -17,7 +17,8 @@ const userProfilSchema = mongoose.Schema({
     tel: String,
     chef: Boolean,
     orders: [{type: mongoose.Schema.Types.ObjectId, ref: 'orders'}],
-    userPreference: [{type: mongoose.Schema.Types.ObjectId, ref: 'userPreference'}]
+    userPreference: [{type: mongoose.Schema.Types.ObjectId, ref: 'userPreference'}],
+    wishList: [{type: mongoose.Schema.Types.ObjectId, ref: 'recipes'}],
 })
 
 const UserProfil = mongoose.model('userProfil', userProfilSchema);
