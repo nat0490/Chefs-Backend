@@ -101,7 +101,7 @@ router.post('/signin', (req, res) => {
         if (data && bcrypt.compareSync(req.body.password, data.password)) {
           const id_userProfile = data.userProfile
           UserProfil.findById(id_userProfile).then(userProfile => {
-            res.json({ result: true, dataUserConnexion: userProfile  });
+             ({ result: true, dataUserConnexion: data , dataUserProfils : userProfile });
           }
           )
         } else {
