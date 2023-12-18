@@ -58,9 +58,9 @@ router.post('/newrecipes/:userChefId', (req, res) => {
 
 
 //CREER UNE RECETTE ET METTRE ID DANS USERCHEF
-router.post('/newrecipesV2/:userChefId', async (req, res) => {
+router.post('/newrecipesV2/:chefId', async (req, res) => {
   try {
-    const chefId = req.params.userChefId;
+    const {chefId} = req.params;
 
     // Vérifier si une recette existe déjà pour ce chef
     const existingRecipe = await Recipes.findOne({ userChef: chefId, title: req.body.title });
@@ -113,7 +113,6 @@ router.post('/newrecipesV2/:userChefId', async (req, res) => {
 // Récupérer les informations d'une recette spécifique
 router.get('/:recipeId', (req, res) => {
   const recipeId = req.params.recipeId;
-
   Recipes.findOne({ _id: recipeId })
     .then(recipe => {
       if (recipe) {
@@ -327,6 +326,24 @@ router.put('/:recipeId/updateingredients', async (req, res) => {
   })
 });
 
+
+
+
+
+// Route pour récupérer les recettes d'un chef spécifique
+router.get('/recipes/:chefId', async (req, res) => {
+  const chefId = req.params.chefId;
+
+  // Récupérer les recettes du chef depuis la base de données en utilisant l'ID du chef
+  Recipes.find({ userchef: chefId })
+    .then(chefRecipes => {
+      res.json({ result: true, chefRecipes });
+    })
+    .catch(error => {
+      console.error('Error fetching chef recipes:', error);
+      res.status(500).json({ result: false, error: 'Internal Server Error' });
+    });
+});
 
 
 
