@@ -133,6 +133,8 @@ router.get('/:recipeId', (req, res) => {
 router.get('/', (req,res) => {
   Recipes.find({})
   .populate('ingredients')
+  .populate('ustensils')
+  .exec()
   .then(recipes => {
       res.json({ result: true, recipes }) // je veux afficher les recettes 
   })
