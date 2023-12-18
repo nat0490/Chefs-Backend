@@ -58,9 +58,9 @@ router.post('/newrecipes/:userChefId', (req, res) => {
 
 
 //CREER UNE RECETTE ET METTRE ID DANS USERCHEF
-router.post('/newrecipesV2/:userChefId', async (req, res) => {
+router.post('/newrecipesV2/:chefId', async (req, res) => {
   try {
-    const chefId = req.params.userChefId;
+    const {chefId} = req.params;
 
     // Vérifier si une recette existe déjà pour ce chef
     const existingRecipe = await Recipes.findOne({ userChef: chefId, title: req.body.title });
