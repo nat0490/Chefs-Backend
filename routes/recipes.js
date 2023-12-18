@@ -329,31 +329,9 @@ router.put('/:recipeId/updateingredients', async (req, res) => {
 
 
 
-// Fonction utilitaire pour sélectionner des éléments aléatoires dans un tableau
-function getRandomItems(array, numItems) {
-  const shuffled = array.sort(() => 0.5 - Math.random());
-  return shuffled.slice(0, numItems);
-}
-
-// Vos routes pour les recettes viennent ensuite
-router.get('/random', async (req, res) => {
-  try {
-    // Récupérer toutes les recettes depuis la base de données
-    const allRecipes = await Recipes.find();
-
-    // Sélectionner trois recettes aléatoires depuis le résultat
-    const randomRecipes = getRandomItems(allRecipes, 3);
-
-    res.json({ result: true, randomRecipes });
-  } catch (error) {
-    console.error('Error fetching random recipes:', error);
-    res.status(500).json({ result: false, error: 'Internal Server Error' });
-  }
-});
-
 
 // Route pour récupérer les recettes d'un chef spécifique
-router.get('/:chefId/recipes', async (req, res) => {
+router.get('/recipes/:chefId', async (req, res) => {
   const chefId = req.params.chefId;
 
   // Récupérer les recettes du chef depuis la base de données en utilisant l'ID du chef
@@ -366,7 +344,6 @@ router.get('/:chefId/recipes', async (req, res) => {
       res.status(500).json({ result: false, error: 'Internal Server Error' });
     });
 });
-
 
 
 
