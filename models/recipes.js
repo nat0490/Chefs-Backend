@@ -17,7 +17,7 @@ const recipesSchema = mongoose.Schema({
     title: String,
     image: String,
     time: String,
-    feedback: [{ type: mongoose.Schema.Types.ObjectId, ref: 'feedbacks' }],
+    feedback: [{ type: mongoose.Schema.Types.ObjectId, ref: 'feedback' }],
     type: String,
     notes: [Number],
     prix: prixSchema,
