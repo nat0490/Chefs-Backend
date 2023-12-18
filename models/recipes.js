@@ -13,7 +13,7 @@ const ingredientsSchema = mongoose.Schema({
 });
 
 const recipesSchema = mongoose.Schema({
-    userChef: { type: mongoose.Schema.Types.ObjectId, ref: 'userchefs' },
+    userChef: { type: mongoose.Schema.Types.ObjectId, ref: 'userchef' },
     title: String,
     image: String,
     time: String,
