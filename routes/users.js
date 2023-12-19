@@ -98,10 +98,12 @@ router.post('/signin', (req, res) => {
     UserConnexion.findOne({ email: req.body.email })
       .populate("userProfile")
       .then(data => {
+        console.log(data)
         if (data && bcrypt.compareSync(req.body.password, data.password)) {
           const id_userProfile = data.userProfile
           UserProfil.findById(id_userProfile).then(userProfile => {
-            res.json({ result: true, dataUserConnexion: data  });
+            res.json({ result: true, dataUserConnexion: data , dataUserProfils : userProfile });
+             
           }
           )
         } else {

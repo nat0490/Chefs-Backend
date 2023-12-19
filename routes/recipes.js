@@ -128,15 +128,41 @@ router.get('/:recipeId', (req, res) => {
 
 
 
-
 // routes pour récup toutes les recettes. TC OK
 router.get('/', (req,res) => {
   Recipes.find({})
   .populate('ingredients')
+  .populate('ustensils')
+  .populate('feedback')
+  .populate('userChef')
+  .exec()
   .then(recipes => {
       res.json({ result: true, recipes }) // je veux afficher les recettes 
   })
 });
+
+
+
+// Récupérer les informations d'une recette spécifique
+router.get('/displayRecipes/:recipeId', (req, res) => {
+  //const recipeId = '657f241b4a4338fb4a3d4927';
+  const {recipeId} = req.params;
+  Recipes.findOne({ _id: recipeId })
+    .then(recipe => {
+      console.log('Recipes:', recipe);  // Ajoutez cette ligne
+      if (recipe) {
+        res.json({ result: true, recipe });
+      } else {
+        res.json({ result: false, message: 'Recipe not found' });
+      }
+    })
+    .catch(error => {
+      console.error('Error retrieving recipes:', error);
+      res.status(500).json({ result: false, message: 'Internal server error' });
+    });
+});
+
+
 
 
  //METTRE A JOUR  l'image
