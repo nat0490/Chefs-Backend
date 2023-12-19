@@ -125,10 +125,6 @@ router.get('/:recipeId', (req, res) => {
 });
 
 
-<<<<<<< HEAD
-
-=======
->>>>>>> christof
 
 
 
