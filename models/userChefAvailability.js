@@ -5,7 +5,7 @@ const UserChefAvailabilitySchema = new mongoose.Schema({
 
     availability: 
         {
-          date: { type: Date, required: true },
+          date: Date,
       time: String , // Définir le type comme String pour stocker l'heure au format HH:MM
       isAvailable: { type: Boolean, default: true },
           

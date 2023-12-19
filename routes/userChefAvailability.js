@@ -11,10 +11,15 @@ router.post('/:userChefId/add', async (req, res) => {
   try {
     const userChefId = req.params.userChefId;
     const { date, time, isAvailable } = req.body;
+    console.log('Contenu de la requête body :', req.body);
+    console.log('Données reçues :', { date, time, isAvailable });
+
+    // Convertir isAvailable en un booléen
+    const isAvailableBool = isAvailable === 'true';
 
     const newAvailability = new UserChefAvailability({
-      userChef: userChefId, // Associe l'ID de l'utilisateur chef à la disponibilité
-      availability: { date, time, isAvailable },
+      userChef: userChefId,
+      availability: { date, time, isAvailable: isAvailableBool }, // Utiliser le booléen converti
     });
 
     const savedAvailability = await newAvailability.save();
