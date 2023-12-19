@@ -139,7 +139,6 @@ router.get('/', (req,res) => {
   .then(recipes => {
       res.json({ result: true, recipes }) // je veux afficher les recettes 
   })
-<<<<<<< HEAD
 });
 
 
@@ -161,8 +160,6 @@ router.get('/displayRecipes/:recipeId', (req, res) => {
       console.error('Error retrieving recipes:', error);
       res.status(500).json({ result: false, message: 'Internal server error' });
     });
-=======
->>>>>>> christof
 });
 
 
