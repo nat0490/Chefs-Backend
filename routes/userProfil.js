@@ -249,7 +249,7 @@ router.put('/:userId/update-adresse', async (req, res) => {
 
 
 //METTRE A JOUR SON TEL => Test TC OK
-router.put('/:userId/update-tel', async (req, res) => {
+router.put('/:userId/', async (req, res) => {
   const { userId } = req.params;
   const { newTel } = req.body;
   UserProfil.findOne( {_id: userId})

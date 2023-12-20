@@ -6,23 +6,63 @@ const UserChefAvailability  = require('../models/userChefAvailability');
 
 
 
-// Route pour ajouter une disponibilité pour un chef utilisateur spécifique
+// Route pour ajouter une reserve le chef 
 router.post('/:userChefId/add', async (req, res) => {
   try {
     const userChefId = req.params.userChefId;
     const { date, time, isAvailable } = req.body;
-
-    const newAvailability = new UserChefAvailability({
-      userChef: userChefId, // Associe l'ID de l'utilisateur chef à la disponibilité
-      availability: { date, time, isAvailable },
+    
+    // Vérifier si une disponibilité existe déjà pour ce chef pour cette date
+    const existingAvailability = await UserChefAvailability.findOne({
+      userChef: userChefId,
+      'availability.date': date,
     });
 
-    const savedAvailability = await newAvailability.save();
-    res.json(savedAvailability);
+    if (existingAvailability) {
+      // Si une disponibilité existe, la rendre indisponible
+      existingAvailability.availability.isAvailable = false;
+      await existingAvailability.save();
+      res.json(existingAvailability);
+    } else {
+      // Si aucune disponibilité n'existe, créer une nouvelle disponibilité
+      const isAvailableBool = isAvailable === 'true';
+      const newAvailability = new UserChefAvailability({
+        userChef: userChefId,
+        availability: { date, time, isAvailable: isAvailableBool },
+      });
+      const savedAvailability = await newAvailability.save();
+      res.json(savedAvailability);
+    }
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
 });
+
+// Route pour récupérer l'indisponibilité du chef pour une date spécifique
+router.get('/:userChefId', async (req, res) => {
+  try {
+    const userChefId = req.params.userChefId;
+
+    // Recherche de toutes les indisponibilités du chef
+    const chefAvailabilities = await UserChefAvailability.find({
+      userChef: userChefId,
+    });
+
+    if (chefAvailabilities.length > 0) {
+      const allAvailabilities = chefAvailabilities.map((availability) => {
+        return availability.availability;
+      });
+
+      res.json(allAvailabilities); // Renvoyer un tableau de toutes les indisponibilités du chef
+    } else {
+      res.json([]); // Renvoyer un tableau vide si aucune indisponibilité trouvée
+    }
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+
 
 // Route pour récupérer toutes les disponibilités d'un chef utilisateur spécifique
 router.get('/:userChefId', async (req, res) => {
