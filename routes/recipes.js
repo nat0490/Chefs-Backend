@@ -125,11 +125,6 @@ router.get('/:recipeId', (req, res) => {
 });
 
 
-<<<<<<< HEAD
-=======
-
-
->>>>>>> b6157441d62a69a67d9751d27d77d38d3824daba
 
 // routes pour récup toutes les recettes. TC OK
 router.get('/', (req,res) => {
