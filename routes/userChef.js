@@ -6,7 +6,6 @@ const NodeGeocoder = require('node-geocoder')
 // Pour cree un userchef
 router.post('/upgradeToChef/:userId', (req, res) => {
   const userId = req.params.userId;
-
   UserChef.findOne({ userProfil: userId })
     .then(existingUser => {
       if (existingUser === null) {
@@ -60,7 +59,7 @@ router.put('/addRecipe/:userChefId', (req, res) => {
 router.get('/:userChefId', (req, res) => {
   UserChef.findOne({ _id: req.params.userChefId })
     .populate("userProfil")
-    .exec()
+    .populate('recipes')
     .then(data => {
       if (data) {
         res.json({ result: true, data });
@@ -70,11 +69,25 @@ router.get('/:userChefId', (req, res) => {
     })
 });
 
+// routes pour récup tout les chef. TC OK
+router.get('/', (req,res) => {
+  UserChef.find({})
+  .populate("userProfil")
+  .populate('recipes')
+  .then(data => {
+    if(data){
+      res.json({ result: true, data }) // je veux afficher les recettes 
+    }
+    else {
+      res.json({ result: false, message: "UserChef profile not found" });
+    }
+  })
+});
+
+
 // Récupérer les informations d'un UserChef par ProfilId
 router.get('/find/:profilId', (req, res) => {
   UserChef.findOne({ userProfil: req.params.profilId })
-    .populate("recipes")
-    .exec()
     .then(data => {
       if (data) {
         res.json({ result: true, data });
@@ -84,7 +97,6 @@ router.get('/find/:profilId', (req, res) => {
     })
     
 });
-
 
 
 //METTRE A JOUR  spécialisation 

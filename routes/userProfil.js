@@ -120,8 +120,7 @@ router.put("/add-preference/:userProfilId", (req, res) => {
   UserProfil.findOne({ _id: userProfilId })
     .then(data => {
       //console.log(data.userPreference);
-      const samePreference = data.userPreference.filter(e => e === userPreference);
-      if(samePreference.length === 0) {
+      if(data) {
         UserProfil.updateOne(
           { _id: userProfilId },
           { $push: { userPreference } }

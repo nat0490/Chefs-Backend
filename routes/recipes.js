@@ -125,12 +125,6 @@ router.get('/:recipeId', (req, res) => {
 });
 
 
-<<<<<<< HEAD
-
-=======
->>>>>>> christof
-
-
 
 // routes pour récup toutes les recettes. TC OK
 router.get('/', (req,res) => {
@@ -143,7 +137,6 @@ router.get('/', (req,res) => {
   .then(recipes => {
       res.json({ result: true, recipes }) // je veux afficher les recettes 
   })
-<<<<<<< HEAD
 });
 
 
@@ -153,6 +146,14 @@ router.get('/displayRecipes/:recipeId', (req, res) => {
   //const recipeId = '657f241b4a4338fb4a3d4927';
   const {recipeId} = req.params;
   Recipes.findOne({ _id: recipeId })
+  .populate('userChef')
+  .populate({
+    path: 'userChef',
+    populate: {
+      path: 'userProfil',
+      model: 'userProfil',
+    },
+  })
     .then(recipe => {
       console.log('Recipes:', recipe);  // Ajoutez cette ligne
       if (recipe) {
@@ -165,8 +166,6 @@ router.get('/displayRecipes/:recipeId', (req, res) => {
       console.error('Error retrieving recipes:', error);
       res.status(500).json({ result: false, message: 'Internal server error' });
     });
-=======
->>>>>>> christof
 });
 
 

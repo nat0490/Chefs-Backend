@@ -42,6 +42,6 @@ router.delete('/delete-preference/:preferenceId', async (req, res) => {
       
 });
 
-module.exports = router;
+
 
 module.exports = router;
