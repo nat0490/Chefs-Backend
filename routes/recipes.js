@@ -111,34 +111,30 @@ router.post('/newrecipesV2/:chefId', async (req, res) => {
 
 
 //SUPPRIMER UNE RECETTE + DANS PROFIL CHEF
-router.delete("/delete/:recipeId", (req, res) => {
-  if (req.params.recipeId === "" || req.body.chefId === "") {
-    res.status(500).json({ result: false, error: "Missing fields" });
-  } else {
-    Recipes.deleteOne({ _id: req.params.recipeId })
-      .then((dataDeleted) => {
-      console.log(dataDeleted);
-      if (dataDeleted.deletedCount === 0) {
-        res.status(500).json({ result: false, error: "Impossible to delete" });
-      } else {
-        res.json({ result: true });
-        UserChef.findOne({ _id: req.body.chefId})
-        .then(data => {
-          if (data) {
-            UserChef.updateOne(
-              { _id: req.body.chefId},
-              { $pull: { recipes: req.params.recipeId } },
-            ).then(data => {
-              //MODIFIER ICI
-              console.log(data);
-              res.json(data);
-            })
-          } else {
-            res.json({result: false, message: 'user not found'})
-          }
-        })
-      }
-    });
+router.delete("/delete/:recipeId", async (req, res) => {
+  try {
+    if (!req.params.recipeId || !req.body.chefId) {
+      return res.status(500).json({ result: false, error: "Missing fields" });
+    }
+    const dataDeleted = await Recipes.deleteOne({ _id: req.params.recipeId });
+    if (dataDeleted.deletedCount === 0) {
+      return res.status(500).json({ result: false, error: "Impossible to delete" });
+    }
+    const chefData = await UserChef.findOne({ _id: req.body.chefId });
+    if (!chefData) {
+      return res.json({ result: false, message: 'User not found' });
+    }
+    const updateResult = await UserChef.updateOne(
+      { _id: req.body.chefId },
+      { $pull: { recipes: req.params.recipeId } }
+    );
+    if (updateResult.acknowledged === false) {
+      return res.status(500).json({ result: false, error: "noMatch" });
+    }
+    res.json({ result: true, message: 'Recipe removed from chef' });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ result: false, error: "Internal server error" });
   }
 });
 
