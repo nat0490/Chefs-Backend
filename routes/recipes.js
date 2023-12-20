@@ -110,6 +110,39 @@ router.post('/newrecipesV2/:chefId', async (req, res) => {
 });
 
 
+//SUPPRIMER UNE RECETTE + DANS PROFIL CHEF
+router.delete("/delete/:recipeId", (req, res) => {
+  if (req.params.recipeId === "" || req.body.chefId === "") {
+    res.status(500).json({ result: false, error: "Missing fields" });
+  } else {
+    Recipes.deleteOne({ _id: req.params.recipeId })
+      .then((dataDeleted) => {
+      console.log(dataDeleted);
+      if (dataDeleted.deletedCount === 0) {
+        res.status(500).json({ result: false, error: "Impossible to delete" });
+      } else {
+        res.json({ result: true });
+        UserChef.findOne({ _id: req.body.chefId})
+        .then(data => {
+          if (data) {
+            UserChef.updateOne(
+              { _id: req.body.chefId},
+              { $pull: { recipes: req.params.recipeId } },
+            ).then(data => {
+              //MODIFIER ICI
+              console.log(data);
+              res.json(data);
+            })
+          } else {
+            res.json({result: false, message: 'user not found'})
+          }
+        })
+      }
+    });
+  }
+});
+
+
 // Récupérer les informations d'une recette spécifique
 router.get('/:recipeId', (req, res) => {
   const recipeId = req.params.recipeId;
