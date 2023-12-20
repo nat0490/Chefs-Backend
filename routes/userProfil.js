@@ -138,35 +138,28 @@ router.put("/add-preference/:userProfilId", (req, res) => {
     })
 });
 
-//SUPPRIMER UNE PREFERENCE => Test TC OK
-router.put("/remove-preference/:userProfilId", (req, res) => {
+//SUPPRIMER UNE PREFERENCE : MISE A JOUR
+router.put("/remove-preference/:userProfilId", async (req, res) => {
   const { userProfilId } = req.params;
   const { userPreference } = req.body;
-  UserProfil.findOne({ _id: userProfilId , })
-    .then(data => {
-      
-      if (data) {
-        if(data.userPreference.some(e=> e === userPreference )) {
-          const removePreference = data.userPreference.filter(e => e !== userPreference);
-          UserProfil.updateOne(
-            { _id: userProfilId },
-            { $set: { userPreference: removePreference }}
-          ).then((data => {
-            if (data.acknowledged === false) {
-              res.status(500).json({ result: false, error: "noMatch" });
-            } else {
-              res.json({ result: true, message: 'Preference remove' });
-            }
-          }));
-        } else {
-          res.json({result: false, message: "this preference don't exist here"})
-        }
-      } else {
-        res.json({result: false, message:"user not find"})
-      }
-      }
-)});
-
+  try {
+    const userProfile = await UserProfil.findOne({ _id: userProfilId });
+    if (!userProfile) {
+      return res.json({ result: false, message: 'User not found' });
+    }
+    const updateResult = await UserProfil.updateOne(
+      { _id: userProfilId },
+      { $pull: { userPreference } }
+    );
+    if (!updateResult.acknowledged) {
+      return res.status(500).json({ result: false, error: "noMatch" });
+    }
+    res.json({ result: true, message: 'Preference removed from profile' });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ result: false, error: "Internal server error" });
+  }
+});
 
 //AJOUTER UNE COMMANDE => Test TC OK
 router.put("/update-order/:userProfilId", (req, res) => {
