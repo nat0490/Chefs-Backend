@@ -2,12 +2,12 @@ var express = require('express');
 var router = express.Router();
 
 const Order = require('../models/orders');
+const UserProfil = require('../models/userProfil');
 const { checkBody } = require('../modules/checkBody');
 
 
 
 //ENREGISTRER UNE COMMANDE => Test TC OK
-
 router.post('/add', (req,res)=> {
     if (!checkBody(req.body, [ 'recipes', 'userConnexion','status', 'montant', 'date'])) {
         res.status(500).json({ result: false, error: 'Missing or empty fields' });
@@ -25,6 +25,54 @@ router.post('/add', (req,res)=> {
             res.json({ result: true, newOrd });
           });
         }
+      }
+    );
+
+//ENREGISTRER UNE COMMANDE V2 => Enregistrer une commande et la rajouter au userProfil
+router.post('/addV2/:userId', async(req,res)=> {
+    if (!checkBody(req.body, [ 'recipes', 'montant', 'date'])) {
+        res.status(500).json({ result: false, error: 'Missing or empty fields'});
+    }
+    try { 
+        const { userId } = req.params;
+        const { recipes, montant, date } = req.body;
+        const newOrder = new Order({
+            recipes: recipes,
+            userConnexion: userId,
+            status : "en cours",
+            montant: montant,
+            date: date,
+            //2023-12-01T12:30:00.000Z
+          });
+          const savedOrder = await newOrder.save();
+    //AJOUTER LE NUM ORDER AUX USER PROFIL
+          const findUserProfil = await UserProfil.findOne({ _id : userId})
+          if (findUserProfil) {
+            const updateResult = await UserProfil.updateOne(
+                { _id: userId },
+                { $push: { orders: savedOrder.id } }
+              );
+            
+                if(updateResult.acknowledged === false) {
+                    res.status(500).json({result: false, error: "noMatch"})
+                } else {
+                    res.json({ result: true})
+                }
+            } else {
+                res.status(500).json({ result: false, error: 'Profil inexistant' });
+            }
+
+          
+
+          /*
+          newOrder.save().then(newOrd => {
+            res.json({ result: true, newOrd });
+          });*/
+        
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ result: false, error: "Internal server error" });
+    }
       }
     );
 

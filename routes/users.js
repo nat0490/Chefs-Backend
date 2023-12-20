@@ -58,29 +58,7 @@ router.post('/signup', async (req, res) => {
     res.status(500).json({ result: false, error: 'Internal Server Error' });
   }
 });
-  // if (!checkBody(req.body, ['username', 'password', 'email'])) {
-  //   res.status(500).json({ result: false, error: 'Missing or empty fields' });
-  //   return;
-  // }
-  // //Find if user already existe
-  // UserConnexion.findOne({ /*username: req.body.username ||*/ email: req.body.email }).then(data => {
-  //   if (data === null) {
-  //     //user don't exist = create user
-  //     const hash = bcrypt.hashSync(req.body.password, 10);
-  //     const newUser = new UserConnexion({      
-  //       email: req.body.email,
-  //       password: hash,
-  //       token: uid2(32),
-  //     });
-  //     newUser.save().then(newDoc => {
-  //       res.json({ result: true, newDoc });
-  //     });
-  //   } else {
-  //     // User aldready exist
-  //     res.status(500).json({ result: false, error: 'User already exists' });
-  //   }
-  // });
-
+  
 
   
 
