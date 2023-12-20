@@ -75,24 +75,6 @@ router.post('/signin', (req, res) => {
     }
     UserConnexion.findOne({ email: req.body.email })
       .populate("userProfile")
-      /*
-      .populate({
-        path: 'userProfile',
-        populate: [
-          {
-            path: 'userPreference',
-            model: 'userPreference',
-          },
-          {
-            path: 'orders',
-            model: 'orders', // Remplacez 'OrderModel' par le nom réel du modèle des orders
-          },
-          {
-            path: 'wishList',
-            model: 'recipes', // Remplacez 'OrderModel' par le nom réel du modèle des orders
-          },
-        ],
-      })*/
       .then(data => {
         console.log(data)
         if (data && bcrypt.compareSync(req.body.password, data.password)) {

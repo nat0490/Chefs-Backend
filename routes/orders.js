@@ -77,6 +77,23 @@ router.post('/addV2/:userId', async(req,res)=> {
     );
 
 
+//RECUPERER LES INFOS DUNE COMMANDE
+router.get('/details/:orderId', async (req, res) => {
+    Order.findOne({ _id: req.params.orderId})
+        .populate('recipes')
+        .then(data => {
+            if (data) {
+                res.json({result: true, data})
+            } else {
+                res.json({result: false, message: 'order not find'})
+            }
+        })
+        .catch((error) => {
+            console.error(error);
+            res.status(500).json({ result: false, message: 'Erreur serveur' });
+          });
+})
+
 //VOIR TOUTES LES COMMANDES D'UN CLIENT => Test TC OK
 //TOMBE EN ERROR 500 SI SE N'EST PAS UN ID
 router.get('/all/user/:UserConnexionId', (req, res) => {
