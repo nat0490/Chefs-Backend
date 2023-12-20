@@ -47,6 +47,7 @@ router.get('/:userProfilId', (req, res) => {
     .populate("adresse")
     .populate("userPreference")
     .populate("orders")
+    .populate("wishList")
     .exec()
     .then((data) => {
       if (data) {
