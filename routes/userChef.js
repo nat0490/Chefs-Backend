@@ -59,12 +59,8 @@ router.put('/addRecipe/:userChefId', (req, res) => {
 router.get('/:userChefId', (req, res) => {
   UserChef.findOne({ _id: req.params.userChefId })
     .populate("userProfil")
-<<<<<<< HEAD
-    .populate('recipes')
-=======
     .populate("recipes")
     .exec()
->>>>>>> b6157441d62a69a67d9751d27d77d38d3824daba
     .then(data => {
       if (data) {
         res.json({ result: true, data });
