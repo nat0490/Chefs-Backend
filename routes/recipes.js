@@ -140,7 +140,6 @@ router.get('/', (req,res) => {
 });
 
 
-
 // Récupérer les informations d'une recette spécifique
 router.get('/displayRecipes/:recipeId', (req, res) => {
   //const recipeId = '657f241b4a4338fb4a3d4927';
@@ -152,7 +151,8 @@ router.get('/displayRecipes/:recipeId', (req, res) => {
     populate: {
       path: 'userProfil',
       model: 'userProfil',
-    },
+    }
+    .populate(prix),
   })
     .then(recipe => {
       console.log('Recipes:', recipe);  // Ajoutez cette ligne
