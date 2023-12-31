@@ -129,7 +129,7 @@ router.delete("/delete/:recipeId", async (req, res) => {
       { _id: req.body.chefId },
       { $pull: { recipes: req.params.recipeId } }
     );
-    if (updateResult.acknowledged === false) {
+    if (updateResult.nModified === 0) {
       return res.status(500).json({ result: false, error: "noMatch" });
     }
     res.json({ result: true, message: 'Recipe removed from chef' });

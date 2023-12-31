@@ -2,20 +2,16 @@ const express = require('express');
 const router = express.Router();
 const UserPreference = require('../models/userPreference');
 
-// Créer de nouvelles préférences pour un utilisateur
+// Créer de nouvelles préférences en BDD
 router.post('/new-preference', async (req, res) => {
-    const { userProfilId, typeCuisine } = req.body;
-
+    const {typeCuisine } = req.body;
     const newPreference = new UserPreference({
-        userProfil: userProfilId,
         typeCuisine: typeCuisine,
     });
-
     newPreference.save()
         .then(savedPreference => {
             res.status(201).json({ success: true, preference: savedPreference });
         })
-        
 });
 
 

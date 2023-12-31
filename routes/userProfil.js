@@ -126,14 +126,14 @@ router.put("/add-preference/:userProfilId", (req, res) => {
           { _id: userProfilId },
           { $push: { userPreference } }
         ).then((data) => {
-          if (data.acknowledged === false) {
+          if (data.modifiedCount  === 0) {
             res.status(500).json({ result: false, error: "noMatch" });
           } else {
-            res.json({ result: true });
+            res.json({ result: true, message: "preference added" });
           }
         });
       } else {
-        res.json({ result: false, message: "preference alrady exist"})
+        res.json({ result: false, message: "user not found"})
       }
     })
 });
@@ -151,7 +151,7 @@ router.put("/remove-preference/:userProfilId", async (req, res) => {
       { _id: userProfilId },
       { $pull: { userPreference } }
     );
-    if (!updateResult.acknowledged) {
+    if (updateResult.modifiedCount === 0) {
       return res.status(500).json({ result: false, error: "noMatch" });
     }
     res.json({ result: true, message: 'Preference removed from profile' });
@@ -173,14 +173,14 @@ router.put("/update-order/:userProfilId", (req, res) => {
           { _id: userProfilId },
           { $push: { orders: orderId } }
         ).then((data) => {
-          if (data.acknowledged === false) {
+          if (data.modifiedCount === 0) {
             res.status(500).json({ result: false, error: "noMatch" });
           } else {
-            res.json({ result: true });
+            res.json({ result: true, message: "order added" });
           }
         });
       } else {
-        res.json({ result: false, message: "this order alrady exist"})
+        res.json({ result: false, message: "this order already exist"})
       }
     })
 });
@@ -231,7 +231,7 @@ router.put('/:userId/update-adresse', async (req, res) => {
           { _id: userId },
           { $set: { adresse: newAdresse }}
           ).then((data => {
-            if (data.acknowledged === false) {
+            if (data.modifiedCount === 0) {
               res.status(500).json({ result: false, error: "noMatch" });
             } else {
               res.json({ result: true, message: 'Adresse change' });
@@ -243,7 +243,7 @@ router.put('/:userId/update-adresse', async (req, res) => {
 
 
 //METTRE A JOUR SON TEL => Test TC OK
-router.put('/:userId/', async (req, res) => {
+router.put('/:userId/update-tel', async (req, res) => {
   const { userId } = req.params;
   const { newTel } = req.body;
   UserProfil.findOne( {_id: userId})
@@ -255,7 +255,7 @@ router.put('/:userId/', async (req, res) => {
           { _id: userId },
           { $set: { tel: newTel }}
           ).then((data => {
-            if (data.acknowledged === false) {
+            if (data.modifiedCount === 0) {
               res.status(500).json({ result: false, error: "noMatch" });
             } else {
               res.json({ result: true, message: 'Tel change' });
@@ -275,7 +275,7 @@ router.put('/:userId/update-chef', async (req, res) => {
           { _id: userId },
           { $set: { chef: newStatus }}
           ).then((data => {
-            if (data.acknowledged === false) {
+            if (data.modifiedCount === 0) {
               res.status(500).json({ result: false, error: "noMatch" });
             } else {
               res.json({ result: true, newStatus });

@@ -53,10 +53,10 @@ router.post('/addV2/:userId', async(req,res)=> {
                 { $push: { orders: savedOrder.id } }
               );
             
-                if(updateResult.acknowledged === false) {
+                if(updateResult.nModified  === 0) {
                     res.status(500).json({result: false, error: "noMatch"})
                 } else {
-                    res.json({ result: true})
+                    res.json({ result: true, message: "commande ajouté"})
                 }
             } else {
                 res.status(500).json({ result: false, error: 'Profil inexistant' });
@@ -165,7 +165,7 @@ router.put('/updatestatus/:orderId', (req, res) => {
                 { _id: orderId },
                 { $set: { status: newStatus }}
                 ).then((data => {
-                  if (data.acknowledged === false) {
+                  if (data.nModified === 0) {
                     res.status(500).json({ result: false, error: "noMatch" });
                   } else {
                     res.json({ result: true, message: 'status change' });

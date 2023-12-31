@@ -125,7 +125,7 @@ router.put('/:userToken/update-password', async (req, res) => {
           { token: userToken },
           { $set: { password: hashUpdate }}
           ).then((data => {
-            if (data.acknowledged === false) {
+            if (data.modifiedCount  === 0) {
               res.status(500).json({ result: false, error: "noMatch" });
             } else {
               res.json({ result: true, message: 'Password change' });
