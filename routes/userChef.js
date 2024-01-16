@@ -55,7 +55,7 @@ router.put('/addRecipe/:userChefId', (req, res) => {
 
 
 
-// Récupérer les informations d'un UserChef par Id
+// Récupérer les informations d'un UserChef par Id: pas utilisé
 router.get('/:userChefId', (req, res) => {
   UserChef.findOne({ _id: req.params.userChefId })
     .populate("userProfil")
@@ -80,7 +80,7 @@ router.get('/', (req,res) => {
       res.json({ result: true, data }) // je veux afficher les recettes 
     }
     else {
-      res.json({ result: false, message: "UserChef profile not found" });
+      res.json({ result: false, message: "No profile" });
     }
   })
 });
@@ -89,6 +89,10 @@ router.get('/', (req,res) => {
 // Récupérer les informations d'un UserChef par ProfilId
 router.get('/find/:profilId', (req, res) => {
   UserChef.findOne({ userProfil: req.params.profilId })
+    .populate('recipes')
+    .populate('userProfil')
+    .populate('userCompliment')
+    .exec()
     .then(data => {
       if (data) {
         res.json({ result: true, data });
@@ -113,7 +117,7 @@ router.put('/:userChefId/updatespecialisation', async (req, res) => {
           { _id: userChefId },
           { $set: { spécialisation: newspécialisation }}
           ).then((data => {
-            if (data.acknowledged === false) {
+            if (data.nModified === 0) {
               res.status(500).json({ result: false, error: "noMatch" });
             } else {
               res.json({ result: true, message: 'spécialisation change' });
@@ -137,7 +141,7 @@ router.put('/:userChefId/addCompliment', async (req, res) => {
           { _id: userChefId },
           { $push: { userCompliment: newsuserCompliment }}
           ).then((data => {
-            if (data.acknowledged === false) {
+            if (data.nModified === 0) {
               res.status(500).json({ result: false, error: "noMatch" });
             } else {
               res.json({ result: true, message: 'userCompliment change' });
@@ -163,7 +167,7 @@ router.put('/:userChefId/updateexperience', async (req, res) => {
           { _id: userChefId },
           { $set: { experience: newsexperience}}
           ).then((data => {
-            if (data.acknowledged === false) {
+            if (data.nModified === 0) {
               res.status(500).json({ result: false, error: "noMatch" });
             } else {
               res.json({ result: true, message: 'experience change' });
@@ -187,7 +191,7 @@ router.put('/:userChefId/updatepassion', async (req, res) => {
           { _id: userChefId },
           { $set: { passion: newspassion }}
           ).then((data => {
-            if (data.acknowledged === false) {
+            if (data.nModified === 0) {
               res.status(500).json({ result: false, error: "noMatch" });
             } else {
               res.json({ result: true, message: 'passion change' });
@@ -211,7 +215,7 @@ router.put('/:userChefId/updateservices', async (req, res) => {
           { _id: userChefId },
           { $set: { services: newservices }}
           ).then((data => {
-            if (data.acknowledged === false) {
+            if (data.nModified === 0) {
               res.status(500).json({ result: false, error: "noMatch" });
             } else {
               res.json({ result: true, message: 'services change' });
@@ -261,6 +265,7 @@ router.get('/userchefs/addresses', async (req, res) => {
         const fullAddress = `${addressDetails.rue}, ${addressDetails.ville}, ${addressDetails.codePostal}`;
         
         const result = await geocoder.geocode(fullAddress);
+        //console.log(result);
         if (result.length > 0) {
           addresses.push({
             userId: chef._id,
